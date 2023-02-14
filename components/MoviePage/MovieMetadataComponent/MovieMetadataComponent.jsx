@@ -31,7 +31,7 @@ function MovieMetadataComponent({
 MovieMetadataComponent.propTypes = {
   mediaType: PropTypes.string,
   distributionYear: PropTypes.string,
-  duration: PropTypes.oneOfType(Object),
+  duration: PropTypes.instanceOf(Object),
   accentColor: PropTypes.string,
 };
 

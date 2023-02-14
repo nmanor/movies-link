@@ -41,8 +41,8 @@ Movie.propTypes = {
   name: PropTypes.string,
   mediaType: PropTypes.string,
   distributionYear: PropTypes.string,
-  duration: PropTypes.oneOfType(Object),
-  knownActors: PropTypes.oneOfType(Array),
+  duration: PropTypes.instanceOf(Object),
+  knownActors: PropTypes.instanceOf(Array),
   accentColor: PropTypes.string,
 };
 
