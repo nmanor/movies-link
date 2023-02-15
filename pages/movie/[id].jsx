@@ -6,16 +6,13 @@ import MovieMetadataComponent from '../../components/MoviePage/MovieMetadataComp
 import BackButtonComponent from '../../components/MoviePage/BackButtonComponent/BackButtonComponent';
 import styles from './movie.module.css';
 
-const palette = require('image-palette');
-const pixels = require('image-pixels');
-
 function Movie({
   posterUrl, name, mediaType, distributionYear, duration, knownActors, accentColor,
 }) {
   return (
     <>
       <BackButtonComponent accentColor={accentColor} />
-      <div className={styles.parallax} style={{ 'background-image': `url(${posterUrl})` }} />
+      <div className={styles.parallax} style={{ backgroundImage: `url(${posterUrl})` }} />
       <article className={styles.container}>
         <div className={styles.containerCorner} />
         <div className={styles.header}>
@@ -53,7 +50,7 @@ Movie.defaultProps = {
   distributionYear: 'unknown',
   duration: { hours: 0, minutes: 0 },
   knownActors: [],
-  accentColor: 'rgba(0, 0, 0, 1)',
+  accentColor: '#FFF',
 };
 
 export async function getServerSideProps() {
@@ -61,13 +58,6 @@ export async function getServerSideProps() {
   let data = {};
   if (res.status === 200) {
     data = res.data;
-
-    const { colors } = palette(await pixels(data.posterUrl));
-    const sumArray = (arr) => arr.reduce((a, b) => a + b);
-    const lightest = colors.reduce(
-      (max, current) => (sumArray(max) > sumArray(current) ? max : current),
-    );
-    data.accentColor = `rgba(${lightest[0]}, ${lightest[1]}, ${lightest[2]}, ${lightest[3]})`;
   }
 
   return { props: { ...data } };
