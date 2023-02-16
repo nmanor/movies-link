@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { PropTypes } from 'prop-types';
 import axios from 'axios';
 import { ParallaxBanner, ParallaxProvider } from 'react-scroll-parallax';
+import extractBrightestColor from '@/utils/colorExtractor';
 import ButtonComponent from '../../components/shared/ButtonComponent/ButtonComponent';
 import MovieMetadataComponent from '../../components/MoviePage/MovieMetadataComponent/MovieMetadataComponent';
 import BackButtonComponent from '../../components/MoviePage/BackButtonComponent/BackButtonComponent';
@@ -9,8 +10,17 @@ import PlayersListComponent from '@/components/MoviePage/PlayersListComponent/Pl
 import styles from './movie.module.css';
 
 function Movie({
-  posterUrl, name, mediaType, distributionYear, duration, knownPlayers, accentColor,
+  posterUrl, name, mediaType, distributionYear, duration, knownPlayers,
 }) {
+  const [accentColor, setAccentColor] = useState('#FFF');
+
+  const updateAccentColor = async () => {
+    const color = await extractBrightestColor(posterUrl);
+    setAccentColor(color);
+  };
+
+  useEffect(() => { updateAccentColor(); }, [posterUrl]);
+
   return (
     <ParallaxProvider>
       <meta name="theme-color" content={accentColor} />
@@ -54,7 +64,6 @@ Movie.propTypes = {
   distributionYear: PropTypes.string,
   duration: PropTypes.instanceOf(Object),
   knownPlayers: PropTypes.instanceOf(Array),
-  accentColor: PropTypes.string,
 };
 
 Movie.defaultProps = {
@@ -64,7 +73,6 @@ Movie.defaultProps = {
   distributionYear: 'unknown',
   duration: { hours: 0, minutes: 0 },
   knownPlayers: [],
-  accentColor: '#FFF',
 };
 
 export async function getServerSideProps() {

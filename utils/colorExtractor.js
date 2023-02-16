@@ -1,26 +1,30 @@
 import KMeans from 'ml-kmeans';
-import { createCanvas, loadImage } from 'canvas';
 
 export async function extractColors(imageUrl, numColors = 10, maxDimension = 150, sampleRate = 10) {
-  const response = await fetch(imageUrl);
-  const buffer = await response.buffer();
-  const img = await loadImage(buffer);
+  const img = new Image();
+  img.crossOrigin = 'Anonymous';
+  img.src = `/api/image?url=${imageUrl}`;
+  await new Promise((resolve, reject) => {
+    img.onload = resolve;
+    img.onerror = reject;
+  });
   const scale = Math.min(1, maxDimension / Math.max(img.width, img.height));
   const width = img.width * scale;
   const height = img.height * scale;
-  const canvas = createCanvas(width, height);
+  const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   ctx.drawImage(img, 0, 0, width, height);
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   const pixels = imageData.data;
-  const colorArray = [];
 
+  const colorArray = [];
   for (let i = 0; i < pixels.length; i += sampleRate * 4) {
     const r = pixels[i];
     const g = pixels[i + 1];
     const b = pixels[i + 2];
     colorArray.push([r, g, b]);
   }
+
   const { centroids } = KMeans(colorArray, numColors);
   return centroids.map((centroid) => centroid.centroid.map(Math.round));
 }

@@ -1,14 +1,8 @@
-import extractBrightestColor from '@/utils/colorExtractor';
-
 export default async function handler(req, res) {
   // const { mid } = req.query;
 
-  const posterUrl = 'https://www.themoviedb.org/t/p/original/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg';
-  const accentColor = await extractBrightestColor(posterUrl);
-
   const result = {
-    posterUrl,
-    accentColor,
+    posterUrl: 'https://www.themoviedb.org/t/p/original/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg',
     name: 'Thor: Love and Thunder',
     mediaType: 'Movie',
     distributionYear: '2022',
