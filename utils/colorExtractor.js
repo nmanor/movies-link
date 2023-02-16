@@ -3,7 +3,7 @@ import KMeans from 'ml-kmeans';
 export async function extractColors(imageUrl, numColors = 10, maxDimension = 150, sampleRate = 10) {
   const img = new Image();
   img.crossOrigin = 'Anonymous';
-  img.src = `/api/image?url=${imageUrl}`;
+  img.src = imageUrl;
   await new Promise((resolve, reject) => {
     img.onload = resolve;
     img.onerror = reject;
@@ -37,7 +37,7 @@ const rgbToHex = (r, g, b) => `#${[r, g, b]
 const sumArray = (arr) => arr.reduce((a, b) => a + b);
 
 export default async function extractBrightestColor(imageUrl) {
-  let colors = await extractColors(imageUrl);
+  let colors = await extractColors(`/api/image?url=${imageUrl}`);
   colors = colors.filter((color) => sumArray(color) <= 620);
   const brightest = colors.reduce(
     (max, current) => (sumArray(max) > sumArray(current) ? max : current),
