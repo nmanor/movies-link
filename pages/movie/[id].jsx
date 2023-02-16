@@ -1,18 +1,24 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
 import axios from 'axios';
+import { ParallaxBanner, ParallaxProvider } from 'react-scroll-parallax';
 import ButtonComponent from '../../components/shared/ButtonComponent/ButtonComponent';
 import MovieMetadataComponent from '../../components/MoviePage/MovieMetadataComponent/MovieMetadataComponent';
 import BackButtonComponent from '../../components/MoviePage/BackButtonComponent/BackButtonComponent';
+import PlayersListComponent from '@/components/MoviePage/PlayersListComponent/PlayersListComponent';
 import styles from './movie.module.css';
 
 function Movie({
-  posterUrl, name, mediaType, distributionYear, duration, knownActors, accentColor,
+  posterUrl, name, mediaType, distributionYear, duration, knownPlayers, accentColor,
 }) {
   return (
-    <>
+    <ParallaxProvider>
+      <meta name="theme-color" content={accentColor} />
       <BackButtonComponent accentColor={accentColor} />
-      <div className={styles.parallax} style={{ backgroundImage: `url(${posterUrl})` }} />
+      <ParallaxBanner
+        layers={[{ image: posterUrl, speed: -15 }]}
+        className={styles.parallax}
+      />
       <article className={styles.container}>
         <div className={styles.containerCorner} />
         <div className={styles.header}>
@@ -28,8 +34,16 @@ function Movie({
             text="I watched this movie"
           />
         </div>
+
+        <div className={styles.playersSection}>
+          <h2>Players you know</h2>
+          <PlayersListComponent
+            playersList={knownPlayers.sort((p1, p2) => p2.totalNumOfMovies - p1.totalNumOfMovies)}
+            accentColor={accentColor}
+          />
+        </div>
       </article>
-    </>
+    </ParallaxProvider>
   );
 }
 
@@ -39,7 +53,7 @@ Movie.propTypes = {
   mediaType: PropTypes.string,
   distributionYear: PropTypes.string,
   duration: PropTypes.instanceOf(Object),
-  knownActors: PropTypes.instanceOf(Array),
+  knownPlayers: PropTypes.instanceOf(Array),
   accentColor: PropTypes.string,
 };
 
@@ -49,7 +63,7 @@ Movie.defaultProps = {
   mediaType: 'unknown',
   distributionYear: 'unknown',
   duration: { hours: 0, minutes: 0 },
-  knownActors: [],
+  knownPlayers: [],
   accentColor: '#FFF',
 };
 

@@ -11,8 +11,12 @@
 }
 
 :root {
-  --background-color: black;
-  --padding-sides-value: 40px;
+  --gray-200: #b6b6b6;
+  --gray-400: #8f8f8f;
+  --gray-700: #363636;
+  --gray-900: #1a1a1a;
+  --background-color: var(--gray-900);
+  --padding-sides-value: 25px;
 }
 
 * {

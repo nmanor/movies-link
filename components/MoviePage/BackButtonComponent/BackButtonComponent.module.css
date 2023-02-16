@@ -1,9 +1,10 @@
 .container {
     --blur-radius: 30px;
     --size: calc(120px + var(--blur-radius));
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
+    z-index: 20;
     height: var(--size);
     width: var(--size);
     margin: calc(-1 * var(--blur-radius));
@@ -17,7 +18,7 @@
 
 .blurBorder {
     filter: blur(var(--blur-radius));
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
     border-radius: 0 0 100% 0;
     height: var(--size);
     width: var(--size);

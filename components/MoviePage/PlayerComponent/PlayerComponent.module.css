@@ -1,0 +1,44 @@
+.container {
+    --border-radius: 32px;
+    width: 100%;
+    outline: none;
+    border: none;
+    text-align: start;
+    font-size: 1em;
+    display: grid;
+    grid-template: 1fr / 70px 1fr auto;
+    align-items: center;
+    gap: 15px;
+    background-color: var(--gray-700);
+    border-radius: var(--border-radius);
+    padding: 7px;
+    transition: 100ms ease-in-out;
+}
+
+.container:active {
+    background-color: var(--gray-400);
+}
+
+.container p {
+    color: white;
+}
+
+.container img {
+    border-radius: var(--border-radius);
+    object-fit: cover;
+}
+
+.watchedMovies span {
+    color: white;
+}
+
+.watchedMovies {
+    font-size: 0.9em;
+    color: var(--gray-200) !important;
+}
+
+.svgIcon {
+    width: 17px;
+    height: 17px;
+    margin: 10px;
+}

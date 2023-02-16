@@ -1,9 +1,9 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
 import styles from './MovieMetadataComponent.module.css';
-import CameraSVGComponent from '../../svg/CameraSVGComponent';
-import CalendarSVGComponent from '../../svg/CalendarSVGComponent';
-import ClockSVGComponent from '../../svg/ClockSVGComponent';
+import CameraSVGComponent from '../../shared/svg/CameraSVGComponent';
+import CalendarSVGComponent from '../../shared/svg/CalendarSVGComponent';
+import ClockSVGComponent from '../../shared/svg/ClockSVGComponent';
 
 function MovieMetadataComponent({
   mediaType, distributionYear, duration, accentColor,
