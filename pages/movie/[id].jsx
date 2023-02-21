@@ -1,30 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { PropTypes } from 'prop-types';
 import axios from 'axios';
 import { ParallaxBanner, ParallaxProvider } from 'react-scroll-parallax';
-import extractBrightestColor from '@/utils/colorExtractor';
+import extractBrightestColor from '../../utils/colorExtractor';
 import ButtonComponent from '../../components/shared/ButtonComponent/ButtonComponent';
+import PopupComponent from '../../components/shared/PopupComponent/PopupComponent';
+import DatePickerComponent from '../../components/shared/DatePickerComponent/DatePickerComponent';
 import MovieMetadataComponent from '../../components/MoviePage/MovieMetadataComponent/MovieMetadataComponent';
 import BackButtonComponent from '../../components/MoviePage/BackButtonComponent/BackButtonComponent';
-import PlayersListComponent from '@/components/MoviePage/PlayersListComponent/PlayersListComponent';
+import PlayersListComponent from '../../components/MoviePage/PlayersListComponent/PlayersListComponent';
 import styles from './movie.module.css';
 
 function Movie({
-  posterUrl, name, mediaType, distributionYear, duration, knownPlayers,
+  id, posterUrl, name, watchedByUser, mediaType, distributionYear, duration, knownPlayers,
 }) {
   const [accentColor, setAccentColor] = useState('#FFF');
+  const [isDatePopupOpen, setIsDatePopupOpen] = useState(false);
 
   const updateAccentColor = async () => {
     const color = await extractBrightestColor(posterUrl);
     setAccentColor(color);
   };
-
   useEffect(() => { updateAccentColor(); }, [posterUrl]);
+
+  const handlePopup = useCallback(() => setIsDatePopupOpen((value) => !value), [isDatePopupOpen]);
 
   return (
     <ParallaxProvider>
       <meta name="theme-color" content={accentColor} />
       <BackButtonComponent accentColor={accentColor} />
+      {isDatePopupOpen && (
+      <PopupComponent
+        title="When did you watch the movie?"
+        positiveButtonText="Save"
+        onBlur={handlePopup}
+        onResult={(res) => alert(`You choose: ${res}`)}
+        accentColor={accentColor}
+      >
+        <DatePickerComponent accentColor={accentColor} allowUndefined />
+      </PopupComponent>
+      )}
       <ParallaxBanner
         layers={[{ image: posterUrl, speed: -15 }]}
         className={styles.parallax}
@@ -41,7 +56,8 @@ function Movie({
           />
           <ButtonComponent
             accentColor={accentColor}
-            text="I watched this movie"
+            text={`${watchedByUser ? 'Remove from' : 'Add to'} my watched list`}
+            onClick={watchedByUser ? () => {} : handlePopup}
           />
         </div>
 
@@ -58,8 +74,10 @@ function Movie({
 }
 
 Movie.propTypes = {
+  id: PropTypes.string,
   posterUrl: PropTypes.string,
   name: PropTypes.string,
+  watchedByUser: PropTypes.bool,
   mediaType: PropTypes.string,
   distributionYear: PropTypes.string,
   duration: PropTypes.instanceOf(Object),
@@ -67,8 +85,10 @@ Movie.propTypes = {
 };
 
 Movie.defaultProps = {
+  id: '0',
   posterUrl: '',
   name: 'unknown',
+  watchedByUser: true,
   mediaType: 'unknown',
   distributionYear: 'unknown',
   duration: { hours: 0, minutes: 0 },

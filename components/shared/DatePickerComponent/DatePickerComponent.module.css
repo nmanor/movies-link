@@ -1,0 +1,98 @@
+.container {
+    margin: 25px 0;
+}
+
+.container > * {
+    transition: 1s;
+}
+
+.calender {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 15px 0;
+    gap: 7px;
+}
+
+.calenderContainer {
+    opacity: 0.3;
+    pointer-events:none;
+}
+
+.week {
+    display: flex;
+    width: 100%;
+}
+
+.week > * {
+    flex: 1;
+    text-align: center
+}
+
+.week input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.week input:checked ~ .checkmark {
+    color: black;
+    font-weight: bold;
+    border-radius: 100%;
+}
+
+.checkmark {
+    --size: 40px;
+    width: var(--size);
+    height: var(--size);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 400ms ease-in-out;
+    margin: 0 auto;
+}
+
+.days {
+    opacity: 0.5;
+}
+
+.buttonsBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 0;
+    opacity: 0.8;
+}
+
+.buttonsBar p {
+    flex: 5;
+    text-align: center;
+}
+
+.buttonsBar button {
+    flex: 1;
+    outline: none;
+    border: none;
+    background-color: transparent;
+}
+
+.svgIcon {
+    width: 15px;
+    height: 15px;
+    fill: white;
+}
+
+.orContainer {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.orContainer div {
+    flex: auto;
+    background-color: white;
+    height: 1px;
+    opacity: 0.5;
+}
