@@ -1,6 +1,6 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
-import BackSVGComponent from '../../shared/svg/BackSVGComponent';
+import BackSVGComponent from '../svg/BackSVGComponent';
 import styles from './BackButtonComponent.module.css';
 
 function BackButtonComponent({ onClick, accentColor }) {

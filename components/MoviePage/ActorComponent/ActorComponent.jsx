@@ -1,11 +1,12 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
 import Image from 'next/image';
-import NextArrowSVGComponent from '@/components/shared/svg/NextArrowSVGComponent';
-import styles from './PlayerComponent.module.css';
+import ClickableListItemComponent from '../../shared/ClickableListItemComponent/ClickableListItemComponent';
+import styles from './ActorComponent.module.css';
 
-function PlayerComponent({
+function ActorComponent({
   player: {
+    id,
     imageUrl,
     fullName,
     lastMovie,
@@ -14,9 +15,9 @@ function PlayerComponent({
   accentColor,
 }) {
   return (
-    <button
-      className={styles.container}
-      type="button"
+    <ClickableListItemComponent
+      href={`/actor/${id}`}
+      accentColor={accentColor}
     >
       <Image
         alt={`Image of ${fullName}`}
@@ -31,19 +32,18 @@ function PlayerComponent({
           {totalNumOfMovies > 1 ? ` and ${totalNumOfMovies - 1} more` : ''}
         </p>
       </div>
-      <NextArrowSVGComponent className={styles.svgIcon} style={{ fill: accentColor }} />
-    </button>
+    </ClickableListItemComponent>
   );
 }
 
-PlayerComponent.propTypes = {
+ActorComponent.propTypes = {
   player: PropTypes.instanceOf(Object),
   accentColor: PropTypes.string,
 };
 
-PlayerComponent.defaultProps = {
+ActorComponent.defaultProps = {
   player: {},
   accentColor: '#FFF',
 };
 
-export default PlayerComponent;
+export default ActorComponent;

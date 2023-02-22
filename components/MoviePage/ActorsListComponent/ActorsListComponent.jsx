@@ -1,18 +1,18 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
 import { Parallax } from 'react-scroll-parallax';
-import PlayerComponent from '@/components/MoviePage/PlayerComponent/PlayerComponent';
-import styles from './PlayersListComponent.module.css';
+import ActorComponent from '../ActorComponent/ActorComponent';
+import styles from './ActorsListComponent.module.css';
 
-function PlayersListComponent({ playersList, accentColor }) {
+function ActorsListComponent({ playersList, accentColor }) {
   return (
     <Parallax
       speed={3}
       className={styles.container}
     >
       {playersList.map((player) => (
-        <PlayerComponent
-          key={player.pid}
+        <ActorComponent
+          key={player.id}
           player={player}
           accentColor={accentColor}
         />
@@ -21,14 +21,14 @@ function PlayersListComponent({ playersList, accentColor }) {
   );
 }
 
-PlayersListComponent.propTypes = {
+ActorsListComponent.propTypes = {
   playersList: PropTypes.arrayOf(Object),
   accentColor: PropTypes.string,
 };
 
-PlayersListComponent.defaultProps = {
+ActorsListComponent.defaultProps = {
   playersList: [],
   accentColor: '#FFF',
 };
 
-export default PlayersListComponent;
+export default ActorsListComponent;

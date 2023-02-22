@@ -13,6 +13,7 @@
     border-radius: var(--border-radius);
     padding: 7px;
     transition: 100ms ease-in-out;
+    text-decoration: none;
 }
 
 .container:active {
@@ -26,15 +27,6 @@
 .container img {
     border-radius: var(--border-radius);
     object-fit: cover;
-}
-
-.watchedMovies span {
-    color: white;
-}
-
-.watchedMovies {
-    font-size: 0.9em;
-    color: var(--gray-200) !important;
 }
 
 .svgIcon {

@@ -7,12 +7,12 @@ import ButtonComponent from '../../components/shared/ButtonComponent/ButtonCompo
 import PopupComponent from '../../components/shared/PopupComponent/PopupComponent';
 import DatePickerComponent from '../../components/shared/DatePickerComponent/DatePickerComponent';
 import MovieMetadataComponent from '../../components/MoviePage/MovieMetadataComponent/MovieMetadataComponent';
-import BackButtonComponent from '../../components/MoviePage/BackButtonComponent/BackButtonComponent';
-import PlayersListComponent from '../../components/MoviePage/PlayersListComponent/PlayersListComponent';
+import BackButtonComponent from '../../components/shared/BackButtonComponent/BackButtonComponent';
+import ActorsListComponent from '../../components/MoviePage/ActorsListComponent/ActorsListComponent';
 import styles from './movie.module.css';
 
 function Movie({
-  id, posterUrl, name, watchedByUser, mediaType, distributionYear, duration, knownPlayers,
+  id, posterUrl, name, watchedByUser, mediaType, distributionYear, duration, knownActors,
 }) {
   const [accentColor, setAccentColor] = useState('#FFF');
   const [isDatePopupOpen, setIsDatePopupOpen] = useState(false);
@@ -56,17 +56,35 @@ function Movie({
           />
           <ButtonComponent
             accentColor={accentColor}
-            text={`${watchedByUser ? 'Remove from' : 'Add to'} my watched list`}
             onClick={watchedByUser ? () => {} : handlePopup}
-          />
+          >
+            {`${watchedByUser ? 'Remove from' : 'Add to'} my watched list`}
+          </ButtonComponent>
         </div>
 
         <div className={styles.playersSection}>
-          <h2>Players you know</h2>
-          <PlayersListComponent
-            playersList={knownPlayers.sort((p1, p2) => p2.totalNumOfMovies - p1.totalNumOfMovies)}
-            accentColor={accentColor}
-          />
+          {knownActors.length === 0
+            ? (
+              <p className={styles.errorMessage}>
+                <strong>
+                  You don&apos;t know any of
+                  {' '}
+                  {name}
+                  &apos;s actors yet.
+                </strong>
+                <br />
+                When you get to know them, they will appear here.
+              </p>
+            ) : (
+              <>
+                <h2>Actors you know</h2>
+                <ActorsListComponent
+                  playersList={knownActors
+                    .sort((p1, p2) => p2.totalNumOfMovies - p1.totalNumOfMovies)}
+                  accentColor={accentColor}
+                />
+              </>
+            )}
         </div>
       </article>
     </ParallaxProvider>
@@ -81,7 +99,7 @@ Movie.propTypes = {
   mediaType: PropTypes.string,
   distributionYear: PropTypes.string,
   duration: PropTypes.instanceOf(Object),
-  knownPlayers: PropTypes.instanceOf(Array),
+  knownActors: PropTypes.instanceOf(Array),
 };
 
 Movie.defaultProps = {
@@ -92,17 +110,27 @@ Movie.defaultProps = {
   mediaType: 'unknown',
   distributionYear: 'unknown',
   duration: { hours: 0, minutes: 0 },
-  knownPlayers: [],
+  knownActors: [],
 };
 
 export async function getServerSideProps() {
-  const res = await axios.get(`${process.env.BASE_URL}/api/movies/0`);
-  let data = {};
-  if (res.status === 200) {
-    data = res.data;
-  }
+  try {
+    const res = await axios.get(`${process.env.BASE_URL}/api/movies/0`);
+    let data = {};
+    if (res.status === 200) {
+      data = res.data;
+    }
 
-  return { props: { ...data } };
+    return { props: { ...data } };
+  } catch (e) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/404',
+      },
+      props: {},
+    };
+  }
 }
 
 export default Movie;

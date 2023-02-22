@@ -2,7 +2,9 @@ import React from 'react';
 import { PropTypes } from 'prop-types';
 import styles from './ButtonComponent.module.css';
 
-function ButtonComponent({ text, accentColor, onClick }) {
+function ButtonComponent({
+  accentColor, onClick, children,
+}) {
   return (
     <button
       className={styles.button}
@@ -10,19 +12,19 @@ function ButtonComponent({ text, accentColor, onClick }) {
       onClick={onClick}
       type="button"
     >
-      {text}
+      {children}
     </button>
   );
 }
 
 ButtonComponent.propTypes = {
-  text: PropTypes.string,
+  children: PropTypes.node,
   accentColor: PropTypes.string,
   onClick: PropTypes.func,
 };
 
 ButtonComponent.defaultProps = {
-  text: 'Click here',
+  children: 'Click here',
   accentColor: 'rgba(0, 0, 0, 1)',
   onClick: () => {},
 };

@@ -35,14 +35,16 @@ function PopupComponent({
         <div className={styles.buttonsContainer}>
           <ButtonComponent
             onClick={handleResult}
-            text={positiveButtonText}
             accentColor={accentColor}
-          />
+          >
+            {positiveButtonText}
+          </ButtonComponent>
           <ButtonComponent
             onClick={onBlur}
-            text={negativeButtonText}
             accentColor="#FFF"
-          />
+          >
+            {negativeButtonText}
+          </ButtonComponent>
         </div>
       </div>
     </aside>
