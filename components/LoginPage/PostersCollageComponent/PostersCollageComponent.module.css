@@ -1,0 +1,30 @@
+.table {
+    --gap: 15px;
+    display: flex;
+    gap: var(--gap);
+    transform: rotate(-7deg);
+    margin-top: -7vh;
+    justify-content: center;
+    z-index: 1;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+}
+
+.column > img {
+    border-radius: 25px;
+    border: white 3px solid;
+    object-fit: cover;
+    box-shadow: rgba(0, 0, 0, 0.25) 0 54px 55px, rgba(0, 0, 0, 0.12) 0 -12px 30px, rgba(0, 0, 0, 0.12) 0 4px 6px, rgba(0, 0, 0, 0.17) 0 12px 13px, rgba(0, 0, 0, 0.09) 0 -3px 5px;
+}
+
+.column:nth-child(1) {
+    margin-top: -45px;
+}
+
+.column:nth-child(3) {
+    margin-top: -65px;
+}

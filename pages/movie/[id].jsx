@@ -10,6 +10,8 @@ import MovieMetadataComponent from '../../components/MoviePage/MovieMetadataComp
 import BackButtonComponent from '../../components/shared/BackButtonComponent/BackButtonComponent';
 import ActorsListComponent from '../../components/MoviePage/ActorsListComponent/ActorsListComponent';
 import styles from './movie.module.css';
+import getServerSidePropsLoginMiddleware from '../../middlware/getServerSidePropsLoginMiddleware';
+import redirectToPage from '../../utils/redirectToPage';
 
 function Movie({
   id, posterUrl, name, watchedByUser, mediaType, distributionYear, duration, knownActors,
@@ -113,7 +115,7 @@ Movie.defaultProps = {
   knownActors: [],
 };
 
-export async function getServerSideProps() {
+export const getServerSideProps = getServerSidePropsLoginMiddleware(async () => {
   try {
     const res = await axios.get(`${process.env.BASE_URL}/api/movies/0`);
     let data = {};
@@ -123,14 +125,8 @@ export async function getServerSideProps() {
 
     return { props: { ...data } };
   } catch (e) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/404',
-      },
-      props: {},
-    };
+    return redirectToPage('/404');
   }
-}
+});
 
 export default Movie;

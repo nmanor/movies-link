@@ -5,7 +5,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ['www.themoviedb.org'],
+    domains: ['www.themoviedb.org', 'upload.wikimedia.org', 'image.tmdb.org'],
   },
 };
 

@@ -13,6 +13,8 @@
 :root {
   --gray-200: #b6b6b6;
   --gray-400: #8f8f8f;
+  --gray-500: #6e6e6e;
+  --gray-600: #414141;
   --gray-700: #363636;
   --gray-900: #1a1a1a;
   --background-color: var(--gray-900);

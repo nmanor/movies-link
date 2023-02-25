@@ -10,6 +10,8 @@ import FacebookSVGComponent from '../../components/shared/svg/FacebookSVGCompone
 import InstagramSVGComponent from '../../components/shared/svg/InstagramSVGComponent';
 import TwitterSVGComponent from '../../components/shared/svg/TwitterSVGComponent';
 import styles from './actor.module.css';
+import getServerSidePropsLoginMiddleware from '../../middlware/getServerSidePropsLoginMiddleware';
+import redirectToPage from '../../utils/redirectToPage';
 
 function Actor({
   id,
@@ -140,7 +142,7 @@ Actor.defaultProps = {
   watchedMovies: [],
 };
 
-export async function getServerSideProps() {
+export const getServerSideProps = getServerSidePropsLoginMiddleware(async () => {
   try {
     const res = await axios.get(`${process.env.BASE_URL}/api/actors/0`);
     let data = {};
@@ -151,14 +153,8 @@ export async function getServerSideProps() {
 
     return { props: { ...data } };
   } catch (e) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/404',
-      },
-      props: {},
-    };
+    return redirectToPage('/404');
   }
-}
+});
 
 export default Actor;
