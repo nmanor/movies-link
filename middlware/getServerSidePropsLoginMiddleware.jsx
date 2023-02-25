@@ -1,4 +1,5 @@
 import { getIronSession } from 'iron-session';
+import { withIronSessionSsr } from 'iron-session/next';
 import redirectToPage from '../utils/redirectToPage';
 import cookiesSettings from '../utils/cookies';
 
@@ -9,15 +10,13 @@ import cookiesSettings from '../utils/cookies';
  * @returns {function} getServerSideProps with `user` field inside the `context`
  */
 export default function getServerSidePropsLoginMiddleware(callback) {
-  return async function getServerSideProps(context) {
-    const { req, res } = context;
-    const session = await getIronSession(req, res, cookiesSettings);
+  return withIronSessionSsr(async (context) => {
+    const { req } = context;
 
-    if (!session.user) {
+    if (!req.session.user) {
       return redirectToPage('/login');
     }
 
-    context.user = session.user;
     return callback(context);
-  };
+  }, cookiesSettings);
 }
