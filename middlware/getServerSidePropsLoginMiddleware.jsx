@@ -1,4 +1,3 @@
-import { getIronSession } from 'iron-session';
 import { withIronSessionSsr } from 'iron-session/next';
 import redirectToPage from '../utils/redirectToPage';
 import cookiesSettings from '../utils/cookies';
