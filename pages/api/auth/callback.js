@@ -1,6 +1,6 @@
 import { getIronSession } from 'iron-session';
 import passport from '../../../utils/passport';
-import login from '../../../dal/user';
+import login from '../../../dal/users';
 import cookiesSettings from '../../../utils/cookies';
 
 export default async function handler(req, res, next) {

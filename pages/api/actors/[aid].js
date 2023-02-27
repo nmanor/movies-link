@@ -1,4 +1,5 @@
 import axios from 'axios';
+import getWatchedMovies from '../../../dal/movies';
 
 function genderIdToString(gender) {
   if (gender === 1) return 'Female';
@@ -8,11 +9,19 @@ function genderIdToString(gender) {
 
 export default async function handler(req, res) {
   try {
-    const { aid } = { aid: 74568 }; // req.query;
+    const { user: userId } = req.body;
+    if (!userId) {
+      return res.status(403).send({ message: 'User not logged in' });
+    }
+
+    const { aid: actorId } = req.query;
+    if (!actorId) {
+      return res.status(404).redirect('/404');
+    }
 
     const requests = [
-      axios.get(`https://api.themoviedb.org/3/person/${aid}?api_key=${process.env.TMDB_KEY}&language=en-US`),
-      axios.get(`https://api.themoviedb.org/3/person/${aid}/external_ids?api_key=${process.env.TMDB_KEY}&language=en-US`)];
+      axios.get(`https://api.themoviedb.org/3/person/${actorId}?api_key=${process.env.TMDB_KEY}&language=en-US`),
+      axios.get(`https://api.themoviedb.org/3/person/${actorId}/external_ids?api_key=${process.env.TMDB_KEY}&language=en-US`)];
     const [{
       data: {
         name, birthday, place_of_birth: placeOfBirth, gender, profile_path: profileUrl,
@@ -23,8 +32,10 @@ export default async function handler(req, res) {
             { instagram_id: instagram, facebook_id: facebook, twitter_id: twitter },
     }] = await axios.all(requests);
 
+    const watchedMovies = await getWatchedMovies(userId, Number(actorId));
+
     const result = {
-      id: aid,
+      id: actorId,
       name,
       birthday,
       placeOfBirth: placeOfBirth.split(',').pop().trim(),
@@ -33,36 +44,11 @@ export default async function handler(req, res) {
       instagram: instagram ? `https://www.instagram.com/${instagram}` : null,
       facebook: facebook ? `https://www.facebook.com/${facebook}` : null,
       twitter: twitter ? `https://twitter.com/${twitter}` : null,
-      watchedMovies: [
-        {
-          id: 0,
-          posterUrl: 'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg',
-          name: 'Thor: Love and Thunder',
-          character: 'Thor Odinson',
-          watchDate: 0,
-        },
-        {
-          id: 1,
-          posterUrl: 'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg',
-          name: 'Loki',
-          character: 'Thor Odinson',
-          watchDate: 0,
-        },
-        {
-          id: 2,
-          posterUrl: 'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/dPrUPFcgLfNbmDL8V69vcrTyEfb.jpg',
-          name: 'Men in Black: International',
-          character: 'Henry / Agent H',
-          watchDate: 5,
-        },
-        {
-          id: 3,
-          posterUrl: 'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/ci1QXfBSUBVpLuzxi9A208uwUVi.jpg',
-          name: 'The Huntsman: Winter\'s War',
-          character: 'The Huntsman',
-          watchDate: -5,
-        },
-      ],
+      watchedMovies: watchedMovies
+        .map((movie) => ({
+          ...movie,
+          posterUrl: `https://www.themoviedb.org/t/p/w600_and_h900_bestv2${movie.posterUrl}`,
+        })),
     };
 
     return res.json(result);

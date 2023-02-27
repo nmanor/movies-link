@@ -1,13 +1,17 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
+import { useRouter } from 'next/router';
 import BackSVGComponent from '../svg/BackSVGComponent';
 import styles from './BackButtonComponent.module.css';
 
-function BackButtonComponent({ onClick, accentColor }) {
+function BackButtonComponent({ accentColor }) {
+  const router = useRouter();
+  const goBack = () => router.back();
+
   return (
     <button
       className={styles.container}
-      onClick={onClick}
+      onClick={goBack}
       type="button"
     >
       <div className={styles.blurBorder} />
@@ -17,12 +21,10 @@ function BackButtonComponent({ onClick, accentColor }) {
 }
 
 BackButtonComponent.propTypes = {
-  onClick: PropTypes.func,
   accentColor: PropTypes.string,
 };
 
 BackButtonComponent.defaultProps = {
-  onClick: () => {},
   accentColor: 'rgba(0, 0, 0, 1)',
 };
 

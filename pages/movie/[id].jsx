@@ -14,7 +14,7 @@ import getServerSidePropsLoginMiddleware from '../../middlware/getServerSideProp
 import redirectToPage from '../../utils/redirectToPage';
 
 function Movie({
-  id, posterUrl, name, watchedByUser, mediaType, distributionYear, duration, knownActors,
+  id, posterUrl, name, watchedByUser, mediaType, distributionYear, duration, knownActors, user,
 }) {
   const [accentColor, setAccentColor] = useState('#FFF');
   const [isDatePopupOpen, setIsDatePopupOpen] = useState(false);
@@ -27,8 +27,18 @@ function Movie({
 
   const handlePopup = useCallback(() => setIsDatePopupOpen((value) => !value), [isDatePopupOpen]);
 
+  const addMovieToUserList = useCallback(async (date) => {
+    const epoch = date ? date.getTime() : -1;
+    const response = await axios.post(
+      '/api/movies/add-to-watched-list',
+      { movieId: id, watchDate: epoch },
+    );
+    console.log(response);
+  }, []);
+
   return (
     <ParallaxProvider>
+      <title>{name}</title>
       <meta name="theme-color" content={accentColor} />
       <BackButtonComponent accentColor={accentColor} />
       {isDatePopupOpen && (
@@ -36,7 +46,7 @@ function Movie({
         title="When did you watch the movie?"
         positiveButtonText="Save"
         onBlur={handlePopup}
-        onResult={(res) => alert(`You choose: ${res}`)}
+        onResult={addMovieToUserList}
         accentColor={accentColor}
       >
         <DatePickerComponent accentColor={accentColor} allowUndefined />
@@ -99,9 +109,10 @@ Movie.propTypes = {
   name: PropTypes.string,
   watchedByUser: PropTypes.bool,
   mediaType: PropTypes.string,
-  distributionYear: PropTypes.string,
+  distributionYear: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   duration: PropTypes.instanceOf(Object),
   knownActors: PropTypes.instanceOf(Array),
+  user: PropTypes.instanceOf(Object),
 };
 
 Movie.defaultProps = {
@@ -113,17 +124,21 @@ Movie.defaultProps = {
   distributionYear: 'unknown',
   duration: { hours: 0, minutes: 0 },
   knownActors: [],
+  user: {},
 };
 
-export const getServerSideProps = getServerSidePropsLoginMiddleware(async () => {
+export const getServerSideProps = getServerSidePropsLoginMiddleware(async (context) => {
   try {
-    const res = await axios.get(`${process.env.BASE_URL}/api/movies/0`);
+    const { user } = context.req.session;
+    const { id } = context.query;
+
+    const res = await axios.post(`${process.env.BASE_URL}/api/movies/${id}`, { user: user.googleId });
     let data = {};
     if (res.status === 200) {
       data = res.data;
     }
 
-    return { props: { ...data } };
+    return { props: { ...data, user } };
   } catch (e) {
     return redirectToPage('/404');
   }

@@ -4,12 +4,12 @@ import styles from './ActorMetadataComponent.module.css';
 import CalendarSVGComponent from '../../shared/svg/CalendarSVGComponent';
 import GlobeSVGComponent from '../../shared/svg/GlobeSVGComponent';
 import GenderSVGComponent from '../../shared/svg/GenderSVGComponent';
+import tmdbDateToJsDate from '@/utils/dates';
 
 function dateToAge(date) {
   if (!date) return 'Unknown';
 
-  const [year, day, month] = date.split('-').map(Number);
-  const birthday = new Date(year, month - 1, day);
+  const birthday = tmdbDateToJsDate(date);
   const ageDate = new Date(Date.now() - birthday);
   return Math.abs(ageDate.getUTCFullYear() - 1970);
 }

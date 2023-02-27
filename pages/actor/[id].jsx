@@ -142,9 +142,12 @@ Actor.defaultProps = {
   watchedMovies: [],
 };
 
-export const getServerSideProps = getServerSidePropsLoginMiddleware(async () => {
+export const getServerSideProps = getServerSidePropsLoginMiddleware(async (context) => {
   try {
-    const res = await axios.get(`${process.env.BASE_URL}/api/actors/0`);
+    const { user } = context.req.session;
+    const { id } = context.query;
+
+    const res = await axios.post(`${process.env.BASE_URL}/api/actors/${id}`, { user: user.googleId });
     let data = {};
 
     if (res.status === 200) {
