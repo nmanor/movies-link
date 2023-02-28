@@ -5,12 +5,13 @@ import ClickableListItemComponent from '../../shared/ClickableListItemComponent/
 import styles from './ActorComponent.module.css';
 
 function ActorComponent({
-  player: {
+  actor: {
     id,
     imageUrl,
     fullName,
     lastMovie,
     totalNumOfMovies,
+    character,
   },
   accentColor,
 }) {
@@ -26,8 +27,10 @@ function ActorComponent({
         height={70}
       />
       <div>
-        <p><strong>{fullName}</strong></p>
-        <p className={styles.watchedMovies}>
+        <p>
+          <strong>{character}</strong>
+        </p>
+        <p className={styles.smallText}>
           <span>{lastMovie}</span>
           {totalNumOfMovies > 1 ? ` and ${totalNumOfMovies - 1} more` : ''}
         </p>
@@ -37,12 +40,12 @@ function ActorComponent({
 }
 
 ActorComponent.propTypes = {
-  player: PropTypes.instanceOf(Object),
+  actor: PropTypes.instanceOf(Object),
   accentColor: PropTypes.string,
 };
 
 ActorComponent.defaultProps = {
-  player: {},
+  actor: {},
   accentColor: '#FFF',
 };
 

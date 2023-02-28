@@ -62,15 +62,14 @@ async function handler(req, res) {
   }
 
   let actors = await getKnownActors(userId, movieId);
-  actors = actors
-    .sort((a1, a2) => a1.movies - a2.movies)
-    .map((actor) => ({
-      imageUrl: `https://www.themoviedb.org/t/p/original${actor.profilePath}`,
-      fullName: actor.name,
-      lastMovie: actor.last,
-      totalNumOfMovies: actor.movies,
-      id: actor.id,
-    }));
+  actors = actors.map((actor) => ({
+    imageUrl: `https://www.themoviedb.org/t/p/original${actor.profilePath}`,
+    fullName: actor.name,
+    lastMovie: actor.last,
+    totalNumOfMovies: actor.movies,
+    id: actor.id,
+    character: actor.character,
+  }));
 
   const result = {
     ...movie,

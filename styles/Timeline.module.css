@@ -1,0 +1,13 @@
+.container {
+    color: white;
+    padding: var(--padding-sides-value);
+    background-color: var(--gray-700);
+}
+
+.container > p {
+    font-size: 1.2em;
+}
+
+.container > h1 {
+    font-size: 1.8em;
+}

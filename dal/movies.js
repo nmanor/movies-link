@@ -59,3 +59,19 @@ export default async function getWatchedMovies(userId, actorId) {
     return [];
   }
 }
+
+export async function getUserTimeline(userId) {
+  try {
+    const query = `MATCH (u:User {googleId: $userId})-[w:WATCHED]->(m:Movie)
+                   CALL {
+                      WITH u, m
+                      MATCH (u)-[:WATCHED]->(m1:Movie)<-[:ACTED_IN]-(a:Actor)-[:ACTED_IN]->(m)
+                      RETURN COUNT(DISTINCT m1) as movies, COUNT(a) as actors
+                   }
+                   RETURN m.name AS title, m.posterUrl AS posterUrl, w.date AS date, movies, actors
+                   ORDER BY date DESC`;
+    return await read(query, { userId });
+  } catch (e) {
+    return [];
+  }
+}

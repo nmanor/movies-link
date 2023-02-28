@@ -4,16 +4,16 @@ import { Parallax } from 'react-scroll-parallax';
 import ActorComponent from '../ActorComponent/ActorComponent';
 import styles from './ActorsListComponent.module.css';
 
-function ActorsListComponent({ playersList, accentColor }) {
+function ActorsListComponent({ actorsList, accentColor }) {
   return (
     <Parallax
       speed={3}
       className={styles.container}
     >
-      {playersList.map((player) => (
+      {actorsList.map((actor) => (
         <ActorComponent
-          key={player.id}
-          player={player}
+          key={actor.id}
+          actor={actor}
           accentColor={accentColor}
         />
       ))}
@@ -22,12 +22,12 @@ function ActorsListComponent({ playersList, accentColor }) {
 }
 
 ActorsListComponent.propTypes = {
-  playersList: PropTypes.arrayOf(Object),
+  actorsList: PropTypes.arrayOf(Object),
   accentColor: PropTypes.string,
 };
 
 ActorsListComponent.defaultProps = {
-  playersList: [],
+  actorsList: [],
   accentColor: '#FFF',
 };
 

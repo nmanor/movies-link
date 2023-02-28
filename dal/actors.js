@@ -2,8 +2,13 @@ import { read, write } from './neo4jDriver';
 
 export default async function getKnownActors(userId, movieId) {
   try {
-    const query = `MATCH (:User {googleId: $userId})-[:WATCHED]->(m:Movie)<-[:ACTED_IN]-(a:Actor)-[:ACTED_IN]->(:Movie {id: $movieId})
-                   RETURN a.id as id, a.name as name, a.profilePath as profilePath, COUNT(m) as movies, last(collect(m)).name as last
+    const query = `MATCH (:User {googleId: $userId})-[:WATCHED]->(m:Movie)<-[:ACTED_IN]-(a:Actor)-[ai:ACTED_IN]->(:Movie {id: $movieId})
+                   RETURN a.id as id, 
+                          a.name as name, 
+                          a.profilePath as profilePath, 
+                          COUNT(m) as movies, 
+                          last(collect(m)).name as last, 
+                          ai.as AS character
                    ORDER BY movies DESC`;
     const result = await read(query, { userId, movieId });
     return result.map((actor) => ({ ...actor, movies: Number(actor.movies) }));

@@ -29,11 +29,10 @@ function Movie({
 
   const addMovieToUserList = useCallback(async (date) => {
     const epoch = date ? date.getTime() : -1;
-    const response = await axios.post(
+    await axios.post(
       '/api/movies/add-to-watched-list',
       { movieId: id, watchDate: epoch },
     );
-    console.log(response);
   }, []);
 
   return (
@@ -91,7 +90,7 @@ function Movie({
               <>
                 <h2>Actors you know</h2>
                 <ActorsListComponent
-                  playersList={knownActors
+                  actorsList={knownActors
                     .sort((p1, p2) => p2.totalNumOfMovies - p1.totalNumOfMovies)}
                   accentColor={accentColor}
                 />

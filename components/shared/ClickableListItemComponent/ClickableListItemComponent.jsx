@@ -1,18 +1,19 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
+import Link from 'next/link';
 import NextArrowSVGComponent from '../svg/NextArrowSVGComponent';
 import styles from './ClickableListItemComponent.module.css';
 
 function ClickableListItemComponent({ children, href, accentColor }) {
   return (
-    <a
+    <Link
       href={href}
       className={styles.container}
       type="button"
     >
       {children}
       <NextArrowSVGComponent className={styles.svgIcon} style={{ fill: accentColor }} />
-    </a>
+    </Link>
   );
 }
 

@@ -5,7 +5,7 @@ import axios from 'axios';
 import PropTypes, { string } from 'prop-types';
 import PostersCollageComponent from '../components/LoginPage/PostersCollageComponent/PostersCollageComponent';
 import redirectToPage from '../utils/redirectToPage';
-import styles from '../styles/login.module.css';
+import styles from '../styles/Login.module.css';
 
 export default function Login({ images }) {
   const bottomRef = useRef(null);
