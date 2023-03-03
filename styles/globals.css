@@ -27,6 +27,7 @@
   margin: 0;
   font-family: GooglaSansDisplay, serif;
   -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
 }
 
 html,

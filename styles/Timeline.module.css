@@ -2,6 +2,7 @@
     color: white;
     padding: var(--padding-sides-value);
     background-color: var(--gray-700);
+    position: absolute;
 }
 
 .container > p {

@@ -7,11 +7,10 @@ async function handler(req, res) {
     return res.status(405).send({ message: 'Only POST requests allowed' });
   }
 
-  const userId = '118301174708090486372';
-  // const { user: userId } = req.body;
-  // if (!userId) {
-  //   return res.status(403).send({ message: 'User not logged in' });
-  // }
+  const { user: userId } = req.body;
+  if (!userId) {
+    return res.status(403).send({ message: 'User not logged in' });
+  }
 
   let result = await getUserTimeline(userId);
   result = result.map((movie) => ({

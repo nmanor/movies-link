@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PropTypes } from 'prop-types';
 import Image from 'next/image';
 import ClickableListItemComponent from '../../shared/ClickableListItemComponent/ClickableListItemComponent';
 import styles from './ActorComponent.module.css';
+import { colorLightening } from '../../../utils/colorExtractor';
 
 function ActorComponent({
   actor: {
@@ -15,16 +16,23 @@ function ActorComponent({
   },
   accentColor,
 }) {
+  const [src, setSrc] = useState(imageUrl);
+  const onError = () => {
+    setSrc('/images/oscar-trophy.png');
+  };
+
   return (
     <ClickableListItemComponent
       href={`/actor/${id}`}
       accentColor={accentColor}
     >
       <Image
+        style={{ backgroundColor: colorLightening(accentColor, 0.7) }}
         alt={`Image of ${fullName}`}
-        src={imageUrl}
+        src={src}
         width={70}
         height={70}
+        onError={onError}
       />
       <div>
         <p>

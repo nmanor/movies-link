@@ -52,6 +52,16 @@ export function hexToRGB(hex) {
   return [+r, +g, +b];
 }
 
+export function colorLightening(hex, rgbFactor = 1) {
+  let [r, g, b] = hexToRGB(hex);
+
+  r = Math.min(Math.round(r * rgbFactor), 255);
+  g = Math.min(Math.round(g * rgbFactor), 255);
+  b = Math.min(Math.round(b * rgbFactor), 255);
+
+  return `rgb(${r},${g},${b})`;
+}
+
 const sumArray = (arr) => arr.reduce((a, b) => a + b);
 
 export default async function extractBrightestColor(imageUrl) {

@@ -1,0 +1,44 @@
+.container {
+    --negative-margin: calc(-1 * var(--padding-sides-value));
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    gap: 5px;
+    margin: 0 var(--negative-margin) 0 var(--negative-margin);
+    width: calc(100vw);
+    display: flex;
+    overflow-x: scroll;
+    padding: var(--padding-sides-value);
+    align-items: center;
+    background: linear-gradient(0deg, rgba(0,0,0,0) 0%, var(--gray-700) 45%);
+}
+
+.container::-webkit-scrollbar {
+    display: none;
+}
+
+.year {
+    height: fit-content;
+    border: none;
+    outline: none;
+    padding: 8px 20px;
+    font-size: 1.2em;
+    border-radius: 50px;
+    background-color: var(--gray-600);
+    color: white;
+}
+
+.selectedYear {
+    background-color: var(--gray-400);
+    box-shadow: rgba(0, 0, 0, 0.15) 0 5px 15px 0;
+}
+
+.separator {
+    width: 15px;
+    height: 2px;
+    background-color: var(--gray-400);
+    flex: none;
+    border-radius: 50px;
+    opacity: 0.2;
+}
+
