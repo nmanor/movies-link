@@ -1,0 +1,6 @@
+.container {
+    position: absolute;
+    padding: var(--padding-sides-value);
+    color: white;
+    min-height: 100vh;
+}
