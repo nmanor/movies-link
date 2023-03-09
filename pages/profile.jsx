@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 import styles from '../styles/Profile.module.css';
 import PopupComponent from '../components/shared/PopupComponent/PopupComponent';
 
+const colors = ['#ffadad', '#ffc6ff', '#bdb2ff', '#a0c4ff', '#9bf6ff', '#caffbf', '#fdffb6', '#ffd6a5'];
+
 export default function Profile() {
   const router = useRouter();
 
@@ -42,7 +44,10 @@ export default function Profile() {
         <label className={styles.popupLabel} htmlFor="group-name">Enter your group name:</label>
         <input className={styles.popupTextInput} id="group-name" type="text" />
         <label className={styles.popupLabel} htmlFor="group-color">Choose a color for your group:</label>
-        <input className={styles.popupColorInput} id="group-color" type="color" />
+        <input className={styles.popupColorInput} id="group-color" type="color" list="presets" />
+        <datalist id="presets">
+          {colors.map((color) => <option value={color} key={color}>{color}</option>)}
+        </datalist>
       </PopupComponent>
       <button type="button" onClick={handleNewGroupClick}>New Group - DO NOT CLICK THAT BUTTON</button>
     </>

@@ -15,8 +15,6 @@ async function handler(req, res) {
   let result = await getUserTimeline(userId);
   result = result.map((movie) => ({
     ...movie,
-    movies: Number(movie.movies),
-    actors: Number(movie.actors),
     posterUrl: `${process.env.TMDB_IMAGE_PREFIX}${movie.posterUrl}`,
   }));
 

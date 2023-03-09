@@ -47,6 +47,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-right: 10px;
 }
 
 .content > p {
@@ -55,5 +56,16 @@
 
 .content > h1 {
     margin-top: var(--circle-border-radius);
+    font-size: 1.25em;
+}
+
+.groupTag {
+    border-radius: 50px;
+    max-width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 5px 10px;
+    font-size: 0.9em;
 }
 

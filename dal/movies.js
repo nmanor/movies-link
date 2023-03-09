@@ -76,20 +76,14 @@ export default async function getWatchedMovies(userId, actorId) {
 
 export async function getUserTimeline(userId) {
   try {
-    const query = `MATCH (u: User {googleId: $userId})-[w:WATCHED]->(m:Movie)
-                   CALL {
-                      WITH u, m
-                      MATCH (u)-[:WATCHED]->(m1:Movie)<-[:ACTED_IN]-(a:Actor)-[:ACTED_IN]->(m)
-                      RETURN COUNT(DISTINCT m1) as movies, COUNT(a) as actors
-                   }
-                   RETURN m.name AS title, 
-                          m.posterUrl AS posterUrl, 
-                          m.id AS movieId,
-                          w.date AS date, 
-                          movies, 
-                          actors
-                   ORDER BY date DESC`;
-    return await read(query, { userId });
+    const query = `MATCH (u:User {googleId: $userId})
+                   OPTIONAL MATCH (u)-[w:WATCHED]->(m:Movie)
+                   WITH m{.*, date: w.date} AS ugm, u
+                   OPTIONAL MATCH (u)-[:MEMBER_OF]->(g:Group)-[w:WATCHED]->(m:Movie)
+                   WITH m{.*, date: w.date, groupName: g.name, groupColor: g.color} AS gm, ugm, u 
+                   WITH COLLECT(DISTINCT gm) + COLLECT(DISTINCT ugm) AS movies
+                   RETURN movies`;
+    return (await read(query, { userId }))[0].movies;
   } catch (e) {
     return [];
   }

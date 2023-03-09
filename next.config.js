@@ -6,6 +6,7 @@ const nextConfig = {
   },
   images: {
     domains: ['www.themoviedb.org', 'upload.wikimedia.org', 'image.tmdb.org', 'lh3.googleusercontent.com'],
+    unoptimized: true,
   },
 };
 
