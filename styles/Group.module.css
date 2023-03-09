@@ -1,0 +1,70 @@
+.container {
+    padding: var(--padding-sides-value);
+    padding-bottom: 100px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    width: 100%;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 15px;
+    background-color: var(--background-color-transparent);
+    width: calc(100% + var(--padding-sides-value) * 2);
+    position: sticky;
+    top: var(--padding-sides-value);
+    z-index: 5;
+    backdrop-filter: blur(30px);
+    padding-bottom: 15px;
+}
+
+.groupIcon {
+    border-radius: 65px;
+    height: 150px;
+    width: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3.5em;
+}
+
+.groupName {
+    color: white;
+    font-size: 1.8em;
+    text-align: center;
+}
+
+.membersCounter {
+    font-size: 1.2em;
+    color: white;
+    opacity: 0.7;
+    margin-top: -10px;
+}
+
+.buttonsContainer {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    margin-top: -15px;
+}
+
+.joinNote {
+    color: white;
+    opacity: 0.8;
+    text-align: justify;
+}
+
+.qrCode {
+    margin: 20px 0 20px calc((100% - 150px) / 2);
+}
+
+.space {
+    margin: 35px 0;
+    width: calc(100% + var(--padding-sides-value) * 2);
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.2);
+}

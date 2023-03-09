@@ -1,3 +1,7 @@
 .secondaryText {
     opacity: 0.6;
 }
+
+.image {
+    background-color: rgba(255, 255, 255, 0.3);
+}

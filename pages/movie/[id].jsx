@@ -8,16 +8,22 @@ import PopupComponent from '../../components/shared/PopupComponent/PopupComponen
 import DatePickerComponent from '../../components/shared/DatePickerComponent/DatePickerComponent';
 import MovieMetadataComponent from '../../components/MoviePage/MovieMetadataComponent/MovieMetadataComponent';
 import BackButtonComponent from '../../components/shared/BackButtonComponent/BackButtonComponent';
-import ActorsListComponent from '../../components/MoviePage/ActorsListComponent/ActorsListComponent';
-import styles from './movie.module.css';
+import { ActorsListComponent } from '../../components/shared/ItemsListComponent/ItemsListComponent';
+import styles from '../../styles/Movie.module.css';
 import getServerSidePropsLoginMiddleware from '../../middlware/getServerSidePropsLoginMiddleware';
 import redirectToPage from '../../utils/redirectToPage';
+import SnackbarComponent from '../../components/shared/SnackbarComponent/SnackbarComponent';
 
-function Movie({
-  id, posterUrl, name, watchedByUser, mediaType, distributionYear, duration, knownActors, user,
+export default function Movie({
+  id, posterUrl, name, watchedByUser: initialWatchedByUser,
+  mediaType, distributionYear, duration, knownActors,
 }) {
   const [accentColor, setAccentColor] = useState('#FFF');
   const [isDatePopupOpen, setIsDatePopupOpen] = useState(false);
+  const [watchedByUser, setWatchedByUser] = useState(initialWatchedByUser);
+  const [loading, setLoading] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const updateAccentColor = async () => {
     const color = await extractBrightestColor(posterUrl);
@@ -25,80 +31,118 @@ function Movie({
   };
   useEffect(() => { updateAccentColor(); }, [posterUrl]);
 
-  const handlePopup = useCallback(() => setIsDatePopupOpen((value) => !value), [isDatePopupOpen]);
+  const changePopupState = useCallback(
+    () => setIsDatePopupOpen((value) => !value),
+    [isDatePopupOpen],
+  );
 
   const addMovieToUserList = useCallback(async (date) => {
+    setLoading(true);
+    setIsDatePopupOpen(false);
     const epoch = date ? date.getTime() : -1;
-    await axios.post(
+    const { data: { success } } = await axios.post(
       '/api/movies/add-to-watched-list',
       { movieId: id, watchDate: epoch },
     );
+    setTimeout(() => {
+      setWatchedByUser(success);
+      setLoading(false);
+
+      const msg = success ? 'The movie was successfully added' : 'Error adding the movie';
+      setSnackbarMessage(msg);
+      setShowSnackbar(true);
+    }, 1000);
   }, []);
 
+  const removeMovieFromUserList = useCallback(async () => {
+    setLoading(true);
+    const { data: { success } } = await axios.post(
+      '/api/movies/remove-from-watched-list',
+      { movieId: id },
+    );
+    setTimeout(() => {
+      setWatchedByUser(!success);
+      setLoading(false);
+
+      const msg = success ? 'The movie was successfully removed' : 'Error removing the movie';
+      setSnackbarMessage(msg);
+      setShowSnackbar(true);
+    }, 1000);
+  }, []);
+
+  const handleSnackbarHiding = useCallback(() => setShowSnackbar(false), []);
+
   return (
-    <ParallaxProvider>
+    <>
       <title>{name}</title>
       <meta name="theme-color" content={accentColor} />
-      <BackButtonComponent accentColor={accentColor} />
-      {isDatePopupOpen && (
-      <PopupComponent
-        title="When did you watch the movie?"
-        positiveButtonText="Save"
-        onBlur={handlePopup}
-        onResult={addMovieToUserList}
-        accentColor={accentColor}
-      >
-        <DatePickerComponent accentColor={accentColor} allowUndefined />
-      </PopupComponent>
-      )}
-      <ParallaxBanner
-        layers={[{ image: posterUrl, speed: -15 }]}
-        className={styles.parallax}
+      <SnackbarComponent
+        show={showSnackbar}
+        message={snackbarMessage}
+        onHiding={handleSnackbarHiding}
       />
-      <article className={styles.container}>
-        <div className={styles.containerCorner} />
-        <div className={styles.header}>
-          <h1>{name}</h1>
-          <MovieMetadataComponent
-            mediaType={mediaType}
-            distributionYear={distributionYear}
-            duration={duration}
-            accentColor={accentColor}
-          />
-          <ButtonComponent
-            accentColor={accentColor}
-            onClick={watchedByUser ? () => {} : handlePopup}
-          >
-            {`${watchedByUser ? 'Remove from' : 'Add to'} my watched list`}
-          </ButtonComponent>
-        </div>
 
-        <div className={styles.playersSection}>
-          {knownActors.length === 0
-            ? (
-              <p className={styles.errorMessage}>
-                <strong>
-                  You don&apos;t know any of
-                  {' '}
-                  {name}
-                  &apos;s actors yet.
-                </strong>
-                <br />
-                When you get to know them, they will appear here.
-              </p>
-            ) : (
-              <>
-                <h2>Actors you know</h2>
+      <ParallaxProvider>
+        <BackButtonComponent accentColor={accentColor} />
+        <PopupComponent
+          isOpen={isDatePopupOpen}
+          title="When did you watch the movie?"
+          positiveButtonText="Save"
+          onNegativeClick={changePopupState}
+          onPositiveClick={addMovieToUserList}
+          accentColor={accentColor}
+        >
+          <DatePickerComponent accentColor={accentColor} allowUndefined />
+        </PopupComponent>
+
+        <ParallaxBanner
+          layers={[{ image: posterUrl, speed: -15 }]}
+          className={styles.parallax}
+        />
+        <article className={styles.container}>
+          <div className={styles.containerCorner} />
+          <div className={styles.header}>
+            <h1>{name}</h1>
+            <MovieMetadataComponent
+              mediaType={mediaType}
+              distributionYear={distributionYear}
+              duration={duration}
+              accentColor={accentColor}
+            />
+            <ButtonComponent
+              loading={loading}
+              accentColor={accentColor}
+              onClick={watchedByUser ? removeMovieFromUserList : changePopupState}
+            >
+              {`${watchedByUser ? 'Remove from' : 'Add to'} my watched list`}
+            </ButtonComponent>
+          </div>
+
+          <div className={styles.playersSection}>
+            {knownActors.length === 0
+              ? (
+                <p className={styles.errorMessage}>
+                  <strong>
+                    You don&apos;t know any of
+                    {' '}
+                    {name}
+                    &apos;s actors yet.
+                  </strong>
+                  <br />
+                  When you get to know them, they will appear here.
+                </p>
+              ) : (
                 <ActorsListComponent
-                  actorsList={knownActors
+                  title="Actors you know"
+                  items={knownActors
                     .sort((p1, p2) => p2.totalNumOfMovies - p1.totalNumOfMovies)}
                   accentColor={accentColor}
                 />
-              </>
-            )}
-        </div>
-      </article>
-    </ParallaxProvider>
+              )}
+          </div>
+        </article>
+      </ParallaxProvider>
+    </>
   );
 }
 
@@ -111,7 +155,6 @@ Movie.propTypes = {
   distributionYear: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   duration: PropTypes.instanceOf(Object),
   knownActors: PropTypes.instanceOf(Array),
-  user: PropTypes.instanceOf(Object),
 };
 
 Movie.defaultProps = {
@@ -123,7 +166,6 @@ Movie.defaultProps = {
   distributionYear: 'unknown',
   duration: { hours: 0, minutes: 0 },
   knownActors: [],
-  user: {},
 };
 
 export const getServerSideProps = getServerSidePropsLoginMiddleware(async (context) => {
@@ -137,10 +179,8 @@ export const getServerSideProps = getServerSidePropsLoginMiddleware(async (conte
       data = res.data;
     }
 
-    return { props: { ...data, user } };
+    return { props: { ...data } };
   } catch (e) {
     return redirectToPage('/404');
   }
 });
-
-export default Movie;

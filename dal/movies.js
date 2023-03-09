@@ -20,16 +20,25 @@ export async function findMovie(movieId, userId) {
 
 export async function addMovieToUser(userId, movieId, watchDate) {
   try {
-    const query = ` MATCH (u:User {googleId: $userId})
-                    MERGE (m:Movie {id: $movieId})
-                    MERGE (u)-[w:WATCHED {date: $watchDate}]->(m)
-                    WITH m
-                    MATCH (a:Actor)-[:ACTED_IN]->(m)
-                    RETURN COUNT(a) = 0 AS populationRequired`;
-    const result = await write(query, { userId, movieId, watchDate });
-    return result[0].populationRequired;
+    const query = `MATCH (u:User {googleId: $userId}), (m:Movie {id: $movieId})
+                   MERGE (u)-[:WATCHED {date: $watchDate}]->(m)`;
+    await write(query, { userId, movieId, watchDate });
+    return true;
   } catch (e) {
-    return null;
+    console.error(e);
+    return false;
+  }
+}
+
+export async function removeMovieFromUser(userId, movieId) {
+  try {
+    const query = `MATCH (:User {googleId: $userId})-[w:WATCHED]->(:Movie {id: $movieId})
+                   DELETE w`;
+    await write(query, { userId, movieId });
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
   }
 }
 
@@ -53,7 +62,11 @@ export async function createMovie(movie) {
 export default async function getWatchedMovies(userId, actorId) {
   try {
     const query = `MATCH (a:Actor {id: $actorId})-[act:ACTED_IN]->(m:Movie)<-[w:WATCHED]-(u:User {googleId: $userId})
-                   RETURN m.id AS id, m.name AS name, m.posterUrl AS posterUrl, act.as AS character, w.date AS watchDate
+                   RETURN m.id AS id, 
+                          m.name AS name, 
+                          m.posterUrl AS posterUrl, 
+                          act.as AS character, 
+                          w.date AS watchDate
                    ORDER BY w.date DESC`;
     return await read(query, { userId, actorId });
   } catch (e) {

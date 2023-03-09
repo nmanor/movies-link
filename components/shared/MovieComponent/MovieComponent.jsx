@@ -1,7 +1,7 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
 import Image from 'next/image';
-import ClickableListItemComponent from '../../shared/ClickableListItemComponent/ClickableListItemComponent';
+import ClickableListItemComponent from '../ClickableListItemComponent/ClickableListItemComponent';
 import styles from './MovieComponent.module.css';
 
 function MovieComponent({
@@ -27,10 +27,7 @@ function MovieComponent({
       <div>
         <p className={styles.watchedMovies}>
           <span>{name}</span>
-          {' '}
-          as
-          {' '}
-          {character}
+          {character && ` as ${character}`}
         </p>
       </div>
     </ClickableListItemComponent>

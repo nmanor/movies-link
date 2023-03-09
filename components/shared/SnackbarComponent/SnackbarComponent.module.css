@@ -1,0 +1,21 @@
+.toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.75) linear-gradient(105deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.25) 65%, rgba(255, 255, 255, 0.21) 100%);
+    backdrop-filter: blur(15px);
+    box-shadow: rgba(0, 0, 0, 0.25) 0 54px 55px, rgba(0, 0, 0, 0.12) 0 -12px 30px, rgba(0, 0, 0, 0.12) 0 4px 6px, rgba(0, 0, 0, 0.17) 0 12px 13px, rgba(0, 0, 0, 0.09) 0 -3px 5px;    color: #fff;
+    padding: 15px 30px;
+    border-radius: 15px;
+    opacity: 0;
+    min-width: calc(100vw - var(--padding-sides-value));
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    z-index: calc(var(--navigation-z-index) + 2);
+}
+
+.toast.show {
+    opacity: 1;
+    visibility: visible;
+}

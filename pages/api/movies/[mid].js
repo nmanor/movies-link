@@ -8,9 +8,6 @@ import { createMovie, findMovie } from '../../../dal/movies';
 const HOUR = 60;
 const MAX_ACTORS = 50;
 
-// Thor: 616037
-// Infinity War: 299536
-
 async function handler(req, res) {
   const { user: userId } = req.body;
   if (!userId) {

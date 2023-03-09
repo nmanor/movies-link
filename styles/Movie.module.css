@@ -1,5 +1,5 @@
 .parallax {
-    min-height: 80vh;
+    min-height: 70vh;
 }
 
 .container {
@@ -36,35 +36,9 @@
     font-size: 2.5rem;
 }
 
-.svgIcon {
-    width: 20px;
-    height: 20px;
-    fill: black;
-}
-
-.socialButtons {
-    margin: 20px 0;
-    display: flex;
-    gap: 10px
-}
-
-.socialButtons a {
-    flex: 1 1;
-    display: flex;
-    justify-content: center;
-    border-radius: 50px;
-    padding: 10px;
-}
-
 .playersSection {
     padding: 30px var(--padding-sides-value);
     z-index: 1;
-}
-
-.playersSection h2 {
-    font-weight: normal;
-    margin-bottom: 15px;
-    color: white;
 }
 
 .errorMessage {

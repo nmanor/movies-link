@@ -10,5 +10,21 @@
 }
 
 .button:active {
-    background-color: white !important;
+    opacity: 0.7;
+}
+
+.loading {
+    background: linear-gradient(256deg, #00000000 30%, rgba(255, 255, 255, 0.7), #00000000 70%);
+    background-size: 600% 600%;
+    animation: loading-animation 1.5s ease-in-out infinite;
+}
+
+@keyframes loading-animation {
+    0% {
+        background-position: 100% 50%
+    }
+
+    100% {
+        background-position: 0 50%
+    }
 }

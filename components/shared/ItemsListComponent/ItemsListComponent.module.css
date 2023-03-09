@@ -1,0 +1,17 @@
+.container {
+    width: 100%;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.listTitle {
+    align-self: flex-start;
+    text-align: left;
+    color: white;
+    font-weight: normal;
+    margin-bottom: 10px;
+}

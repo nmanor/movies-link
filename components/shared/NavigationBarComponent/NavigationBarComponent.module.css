@@ -1,12 +1,15 @@
 .container {
     display: flex;
     justify-content: space-between;
-    position: absolute;
+    position: fixed;
     bottom: 0;
     cursor: pointer;
     user-select: none;
     width: 100%;
-    padding: 15px 60px 25px 60px;
+    padding: 15px 60px;
+    z-index: var(--navigation-z-index);
+    background: var(--background-color-transparent);
+    backdrop-filter: blur(15px);
 }
 
 .container input {

@@ -5,6 +5,7 @@ import styles from '../styles/Search.module.css';
 import SearchBoxComponent from '../components/SearchPage/SearchBoxComponent/SearchBoxComponent';
 import useDebounce from '../hooks/useDebounce';
 import ResultsListComponent from '../components/SearchPage/ResultsListComponent/ResultsListComponent';
+import getServerSidePropsLoginMiddleware from '../middlware/getServerSidePropsLoginMiddleware';
 
 export default function Search() {
   const [isLoading, setIsLoading] = useState(false);
@@ -50,3 +51,5 @@ export default function Search() {
     </>
   );
 }
+
+export const getServerSideProps = getServerSidePropsLoginMiddleware(() => ({ props: {} }));

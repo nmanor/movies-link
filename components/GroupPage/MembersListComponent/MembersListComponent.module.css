@@ -1,0 +1,42 @@
+.title {
+    font-weight: normal;
+    align-self: flex-start;
+    color: white;
+}
+
+.container {
+    width: 100%;
+    position: relative;
+}
+
+.list {
+    width: 100%;
+    overflow-y: scroll;
+    display: flex;
+    align-self: flex-start;
+    align-items: flex-start;
+    gap: 35px;
+}
+
+.edge {
+    position: absolute;
+    background-color: aqua;
+    width: 15vw;
+    height: 100%;
+    top: 0;
+    transition: 200ms ease-in-out;
+}
+
+.edge:nth-child(1) {
+    left: 0;
+    background: linear-gradient(90deg, var(--background-color) 0%, rgba(255,255,255,0) 100%);
+}
+
+.edge:nth-child(2) {
+    right: 0;
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, var(--background-color) 100%);
+}
+
+.invisible {
+    opacity: 0;
+}

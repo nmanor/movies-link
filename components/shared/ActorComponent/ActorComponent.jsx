@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PropTypes } from 'prop-types';
 import Image from 'next/image';
-import ClickableListItemComponent from '../../shared/ClickableListItemComponent/ClickableListItemComponent';
+import ClickableListItemComponent from '../ClickableListItemComponent/ClickableListItemComponent';
 import styles from './ActorComponent.module.css';
 import { colorLightening } from '../../../utils/colorExtractor';
 

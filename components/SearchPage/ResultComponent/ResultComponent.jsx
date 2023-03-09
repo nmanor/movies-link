@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PropTypes } from 'prop-types';
 import Image from 'next/image';
 import ClickableListItemComponent from '../../shared/ClickableListItemComponent/ClickableListItemComponent';
@@ -14,15 +14,22 @@ function ResultComponent({
   },
   priority,
 }) {
+  const [src, setSrc] = useState(imageUrl);
+  const handleError = () => {
+    setSrc('/images/oscar-trophy.png');
+  };
+
   return (
     <ClickableListItemComponent
       href={`/${mediaType.toLowerCase()}/${id}`}
     >
       <Image
+        className={styles.image}
         alt={`Image of ${title}`}
-        src={imageUrl}
+        src={src}
         width={70}
         height={70}
+        onError={handleError}
         priority={priority}
       />
       <div>
