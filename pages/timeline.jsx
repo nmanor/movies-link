@@ -6,7 +6,6 @@ import styles from '../styles/Timeline.module.css';
 import MovieItemComponent from '../components/TimelinePage/MovieItemComponent/MovieItemComponent';
 import getServerSidePropsLoginMiddleware from '../middlware/getServerSidePropsLoginMiddleware';
 import redirectToPage from '../utils/redirectToPage';
-import YearsPickerComponent from '../components/TimelinePage/YearsPickerComponent/YearsPickerComponent';
 
 export default function Timeline({ data }) {
   const refs = {};
@@ -53,7 +52,12 @@ export default function Timeline({ data }) {
         <p>
           Here&apos;s your viewing timeline of all the movies you&apos;ve added to your movie list.
         </p>
-        {movies.map((movie) => <MovieItemComponent movie={movie} />)}
+        {movies.map((movie) => (
+          <MovieItemComponent
+            key={`${movie.id}${movie.groupName ? movie.groupName.replace(/\s+/g, '') : ''}`}
+            movie={movie}
+          />
+        ))}
       </div>
     </ParallaxProvider>
   );
