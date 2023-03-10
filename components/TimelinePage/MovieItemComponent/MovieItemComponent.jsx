@@ -12,7 +12,7 @@ const RGB_FACTOR = 1.2;
 
 export default function MovieItemComponent({
   noLine, priority, movie: {
-    title, posterUrl, date, movies, actors, movieId, ref,
+    name, posterUrl, date, id, ref, groupName, groupColor,
   },
 }) {
   const [accentColor, setAccentColor] = useState('#FFF');
@@ -25,20 +25,28 @@ export default function MovieItemComponent({
 
   return (
     <Parallax speed={-8}>
-      <Link className={styles.container} href={`/movie/${movieId}`} ref={ref}>
+      <Link className={styles.container} href={`/movie/${id}`} ref={ref}>
         <div className={styles.lineContainer}>
           <div className={styles.circle} style={{ backgroundColor: accentColor }} />
           <div className={cx(styles.line, { [styles.invisible]: noLine })} />
         </div>
         <div className={styles.content}>
-          <h1 style={{ color: accentColor }}>{title}</h1>
-          <p>{date ? date.toLocaleDateString('he-IL') : 'No date specified'}</p>
-          <p>{actors && movies ? `${actors} familiar actors from ${movies} different movies` : 'No familiar actors'}</p>
+          <h1 style={{ color: accentColor }}>{name}</h1>
+
+          <p>{date ? `You watched this title on ${date.toLocaleDateString('he-IL')}` : 'No watch date specified'}</p>
+          {groupColor && groupName && (
+          <p
+            className={styles.groupTag}
+            style={{ color: groupColor, border: `${groupColor} 2px solid` }}
+          >
+            {groupName}
+          </p>
+          )}
         </div>
         <Parallax scale={[0.8, 1.1, 'easeInOut']}>
           <Image
             src={posterUrl}
-            alt={`Image of ${title}`}
+            alt={`Image of ${name}`}
             width={110}
             height={150}
             priority={priority}

@@ -15,8 +15,6 @@ import getServerSidePropsLoginMiddleware from '../../middlware/getServerSideProp
 import { MoviesListComponent } from '../../components/shared/ItemsListComponent/ItemsListComponent';
 import BackButtonComponent from '../../components/shared/BackButtonComponent/BackButtonComponent';
 
-const colors = ['#ffadad', '#ffc6ff', '#bdb2ff', '#a0c4ff', '#9bf6ff', '#caffbf', '#fdffb6', '#ffd6a5'];
-
 export default function Group({
   id, name, members, movies, accentColor, joinLink, joinCode, userIsMember,
 }) {
