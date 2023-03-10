@@ -24,36 +24,19 @@ export default function MovieItemComponent({
   useEffect(() => { updateAccentColor(); }, [posterUrl]);
 
   return (
-    <Parallax speed={-8}>
-      <Link className={styles.container} href={`/movie/${id}`} ref={ref}>
-        <div className={styles.lineContainer}>
-          <div className={styles.circle} style={{ backgroundColor: accentColor }} />
-          <div className={cx(styles.line, { [styles.invisible]: noLine })} />
+    <div className={styles.container}>
+      <div className={styles.sidebar}>
+        <div className={styles.date}>
+          <p>{date ? date.getFullYear() : '0000'}</p>
+          <p>{date ? date.toLocaleString('en', { month: 'short' }).toUpperCase() : 'XXX'}</p>
+          <p>{String(date ? date.getDate() : 0).padStart(2, '0')}</p>
         </div>
-        <div className={styles.content}>
-          <h1 style={{ color: accentColor }}>{name}</h1>
-
-          <p>{date ? `You watched this title on ${date.toLocaleDateString('he-IL')}` : 'No watch date specified'}</p>
-          {groupColor && groupName && (
-          <p
-            className={styles.groupTag}
-            style={{ color: groupColor, border: `${groupColor} 2px solid` }}
-          >
-            {groupName}
-          </p>
-          )}
-        </div>
-        <Parallax scale={[0.8, 1.1, 'easeInOut']}>
-          <Image
-            src={posterUrl}
-            alt={`Image of ${name}`}
-            width={110}
-            height={150}
-            priority={priority}
-          />
-        </Parallax>
+        <div className={styles.line} />
+      </div>
+      <Link href={`/movie/${id}`} ref={ref}>
+        {name}
       </Link>
-    </Parallax>
+    </div>
   );
 }
 

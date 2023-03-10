@@ -47,27 +47,14 @@ export default function Timeline({ data }) {
 
   return (
     <ParallaxProvider>
-      <article className={styles.container}>
+      <div className={styles.container}>
+        <div className={styles.sidebar} />
         <h1>Your timeline</h1>
         <p>
           Here&apos;s your viewing timeline of all the movies you&apos;ve added to your movie list.
         </p>
-        <YearsPickerComponent
-          years={years}
-          currentYear={currentYear}
-          onYearClick={updateCurrentYear}
-        />
-        <div>
-          {movies.map((movie, i, arr) => (
-            <MovieItemComponent
-              key={movie.movieId}
-              priority={i <= 4}
-              movie={movie}
-              noLine={i + 1 === arr.length}
-            />
-          ))}
-        </div>
-      </article>
+        {movies.map((movie) => <MovieItemComponent movie={movie} />)}
+      </div>
     </ParallaxProvider>
   );
 }

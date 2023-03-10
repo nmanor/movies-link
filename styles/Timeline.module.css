@@ -1,14 +1,40 @@
 .container {
-    color: white;
+    --sidebar-width: 90px;
     padding: var(--padding-sides-value);
-    background-color: var(--gray-700);
-    position: absolute;
+    padding-left: calc(var(--padding-sides-value) + var(--sidebar-width));
+    color: white;
+    background:
+            radial-gradient(
+                    circle at top left,
+                    rgba(255, 255, 255, 0.3),
+                    transparent 50px
+            ),
+            radial-gradient(
+                    circle at top right,
+                    rgba(255, 255, 255, 0.2),
+                    transparent 100px
+            ),
+            radial-gradient(
+                    at bottom left,
+                    rgba(255, 255, 255, 0.15),
+                    transparent 400px
+            ),
+            radial-gradient(
+                    at bottom right,
+                    rgba(255, 255, 255, 0.1),
+                    transparent 400px
+            );
 }
 
 .container > p {
-    font-size: 1.2em;
+    text-align: justify;
 }
 
-.container > h1 {
-    font-size: 1.8em;
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--sidebar-width);
+    background-color: var(--gray-700);
 }
