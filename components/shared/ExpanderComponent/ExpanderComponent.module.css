@@ -39,3 +39,30 @@
     gap: 15px;
     margin: 15px;
 }
+
+.loadingOverlay {
+    width: 100%;
+    height: 0;
+    position: absolute;
+    background-color: white;
+    z-index: 10;
+    border-radius: 23px;
+    opacity: 0.5;
+}
+
+.loading {
+    height: 100%;
+    background: linear-gradient(256deg, #0000007F 30%, rgba(255, 255, 255, 0.15), #0000007F 70%);
+    background-size: 600% 600%;
+    animation: loading-animation 1.5s ease-in-out infinite;
+}
+
+@keyframes loading-animation {
+    0% {
+        background-position: 100% 50%
+    }
+
+    100% {
+        background-position: 0 50%
+    }
+}

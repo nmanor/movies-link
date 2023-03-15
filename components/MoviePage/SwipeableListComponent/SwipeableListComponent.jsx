@@ -39,7 +39,7 @@ export default function SwipeableListComponent({ groups, onSwipe, actionType }) 
     touchEndX = event.touches[0].clientX;
     const deltaX = touchEndX - touchStartX;
 
-    container.style.transform = `translateX(${deltaX}px)`;
+    if (container) container.style.transform = `translateX(${deltaX}px)`;
   }
 
   function handleTouchEnd(event, group) {

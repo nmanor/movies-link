@@ -16,6 +16,8 @@ import SnackbarComponent from '../../components/shared/SnackbarComponent/Snackba
 import ExpanderComponent from '../../components/shared/ExpanderComponent/ExpanderComponent';
 import SwipeableListComponent, { ActionType } from '../../components/MoviePage/SwipeableListComponent/SwipeableListComponent';
 
+const SECOND = 1000;
+
 export default function Movie({
   id,
   posterUrl,
@@ -36,9 +38,22 @@ export default function Movie({
   const [accentColor, setAccentColor] = useState('#FFF');
   const [popupOpen, setPopupOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [expanderOpen, setExpanderOpen] = useState(false);
+
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [expanderOpen, setExpanderOpen] = useState(false);
+  const [snackbarDelay, setSnackbarDelay] = useState(4 * SECOND);
+  const [handleSnackbarUndo, setHandleSnackbarUndo] = useState(null);
+  const handleSnackbarHiding = useCallback(() => {
+    setShowSnackbar(false);
+    setHandleSnackbarUndo(null);
+  }, []);
+  const openSnackbar = (message, delay = 4 * SECOND, handler = null) => {
+    setSnackbarMessage(message);
+    setSnackbarDelay(delay);
+    setHandleSnackbarUndo(handler);
+    setShowSnackbar(true);
+  };
 
   const updateAccentColor = async () => {
     const color = await extractBrightestColor(posterUrl);
@@ -65,6 +80,7 @@ export default function Movie({
     if (group) data.groupId = group.id;
 
     const { data: { success } } = await axios.post(url, data);
+    chosenGroup = null;
 
     setTimeout(() => {
       if (success) {
@@ -73,23 +89,29 @@ export default function Movie({
       }
 
       setLoading(false);
-      chosenGroup = null;
 
       const msg = success ? 'The movie was successfully added' : 'Error adding the movie';
-      setSnackbarMessage(msg);
-      setShowSnackbar(true);
+      openSnackbar(msg);
     }, 1000);
   }, []);
 
   const removeMovie = useCallback(async () => {
     setLoading(true);
 
-    const group = groups.find((g) => g.id === chosenGroup);
+    const group = watchedByGroups.find((g) => g.id === chosenGroup);
     const url = group ? '/api/groups/remove-movie' : '/api/movies/remove-from-watched-list';
     const data = { movieId: id };
-    if (group) data.groupId = group.id;
+    let { date } = watchedByUser;
+
+    if (group) {
+      data.groupId = group.id;
+      date = group.date;
+    }
 
     const { data: { success } } = await axios.post(url, data);
+
+    const chosenGroupCopy = chosenGroup;
+    chosenGroup = null;
 
     setTimeout(() => {
       if (success) {
@@ -98,15 +120,16 @@ export default function Movie({
       }
 
       setLoading(false);
-      chosenGroup = null;
 
       const msg = success ? 'The movie was successfully removed' : 'Error removing the movie';
-      setSnackbarMessage(msg);
-      setShowSnackbar(true);
+      const undoRemove = () => {
+        chosenGroup = chosenGroupCopy;
+        addMovie(new Date(date));
+      };
+      openSnackbar(msg, 10 * SECOND, () => undoRemove);
     }, 1000);
   }, []);
 
-  const handleSnackbarHiding = useCallback(() => setShowSnackbar(false), []);
   const handleExpanderOnChange = useCallback(() => setExpanderOpen((val) => !val), []);
 
   const changeChosenGroup = (groupId) => { chosenGroup = groupId !== -1 ? groupId : null; };
@@ -205,7 +228,10 @@ export default function Movie({
       <SnackbarComponent
         show={showSnackbar}
         message={snackbarMessage}
+        accentColor={accentColor}
         onHiding={handleSnackbarHiding}
+        onUndo={handleSnackbarUndo}
+        delay={snackbarDelay}
       />
 
       <ParallaxProvider>

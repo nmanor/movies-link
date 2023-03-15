@@ -13,8 +13,8 @@ export default function ExpanderComponent({
     <div
       className={styles.container}
     >
+      <div className={cx(styles.loadingOverlay, { [styles.loading]: loading })} />
       <ButtonComponent
-        loading={loading}
         onClick={onOpen}
         accentColor={accentColor}
         className={cx(styles.button, { [styles.open]: isOpen })}
