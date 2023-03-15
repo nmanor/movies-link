@@ -6,11 +6,11 @@ import styles from './ButtonComponent.module.css';
 const cx = classNames.bind(styles);
 
 function ButtonComponent({
-  accentColor, onClick, loading, outline, children,
+  accentColor, onClick, loading, outline, className, children,
 }) {
   return (
     <button
-      className={cx(styles.button, { [styles.loading]: loading })}
+      className={cx(styles.button, { [styles.loading]: loading }, className)}
       style={{
         backgroundColor: outline ? 'transparent' : accentColor,
         border: outline ? `${accentColor} 2px solid` : '',
@@ -31,6 +31,7 @@ ButtonComponent.propTypes = {
   loading: PropTypes.bool,
   outline: PropTypes.bool,
   onClick: PropTypes.func,
+  className: PropTypes.string,
 };
 
 ButtonComponent.defaultProps = {
@@ -39,6 +40,7 @@ ButtonComponent.defaultProps = {
   loading: false,
   outline: false,
   onClick: () => {},
+  className: '',
 };
 
 export default ButtonComponent;

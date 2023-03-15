@@ -2,15 +2,17 @@ import { read, write } from './neo4jDriver';
 
 export async function findMovie(movieId, userId) {
   try {
-    const query = ` MATCH (m:Movie {id: $movieId}), (u:User {googleId: $userId})
-                    OPTIONAL MATCH (u)-[w:WATCHED]->(m)
-                    RETURN m.id AS id, 
-                           m.posterUrl AS posterUrl, 
-                           m.name AS name, 
-                           m.distributionYear AS distributionYear, 
-                           m.duration AS duration,
-                           m.mediaType AS mediaType,
-                           COUNT(w) <> 0 AS watchedByUser`;
+    const query = `MATCH (m:Movie {id: $movieId}), (u:User {googleId: $userId})
+                   OPTIONAL MATCH (u)-[w:WATCHED]->(m)
+                   OPTIONAL MATCH (u)-[:MEMBER_OF]->(g:Group)-[gw:WATCHED]->(m)
+                   RETURN m.id AS id, 
+                          m.posterUrl AS posterUrl, 
+                          m.name AS name, 
+                          m.distributionYear AS distributionYear, 
+                          m.duration AS duration,
+                          m.mediaType AS mediaType,
+                          {date: w.date} AS watchedByUser,
+                          COLLECT(g{.name, .id, .color, date: gw.date}) AS watchedByGroups`;
     const result = await read(query, { movieId, userId });
     return result[0];
   } catch (e) {

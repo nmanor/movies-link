@@ -42,7 +42,8 @@ async function handler(req, res) {
       duration: [Math.floor(runtime / HOUR), runtime % HOUR],
     };
     movie = await createMovie(movie);
-    movie.watchedByUser = false;
+    movie.watchedByUser = { date: null };
+    movie.watchedByGroups = [];
 
     const { data: { cast } } = response2;
     const actors = cast

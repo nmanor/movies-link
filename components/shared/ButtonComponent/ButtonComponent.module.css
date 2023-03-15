@@ -7,6 +7,9 @@
     padding: 12px;
     font-size: 1.1rem;
     transition: 100ms ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .button:active {

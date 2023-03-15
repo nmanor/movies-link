@@ -4,7 +4,7 @@ import styles from './ActorMetadataComponent.module.css';
 import CalendarSVGComponent from '../../shared/svg/CalendarSVGComponent';
 import GlobeSVGComponent from '../../shared/svg/GlobeSVGComponent';
 import GenderSVGComponent from '../../shared/svg/GenderSVGComponent';
-import tmdbDateToJsDate from '@/utils/dates';
+import tmdbDateToJsDate from '../../../utils/dates';
 
 function dateToAge(date) {
   if (!date) return 'Unknown';

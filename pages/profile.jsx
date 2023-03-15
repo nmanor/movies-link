@@ -6,7 +6,7 @@ import PopupComponent from '../components/shared/PopupComponent/PopupComponent';
 import ColorPickerComponent from '../components/ProfilePage/ColorPickerComponent/ColorPickerComponent';
 import SnackbarComponent from '../components/shared/SnackbarComponent/SnackbarComponent';
 
-const colors = ['#ffadad', '#ffc6ff', '#bdb2ff', '#a0c4ff', '#9bf6ff', '#caffbf', '#fdffb6', '#ffd6a5', '#ffffff'];
+const colors = ['#ffadad', '#ffc6ff', '#bdb2ff', '#a0c4ff', '#9bf6ff', '#caffbf', '#fdffb6', '#ffd6a5', '#fafafa'];
 
 export default function Profile() {
   const router = useRouter();
@@ -30,7 +30,7 @@ export default function Profile() {
       } else {
         setIsCreatingGroup(true);
         try {
-          const { data: { id } } = await axios.post('/api/groups/create', { name, color });
+          const { data: { id } } = await axios.post('/api/groups/create', { name: name.trim(), color });
           if (id) await router.push(`/group/${id}`);
         } catch (e) {
           setSnackbarMessage('An error occurred');
@@ -62,7 +62,7 @@ export default function Profile() {
         onNegativeClick={handleNewGroupNegativeClick}
       >
         <label className={styles.popupLabel} htmlFor="group-name">Enter your group name:</label>
-        <input className={styles.popupTextInput} id="group-name" type="text" />
+        <input className={styles.popupTextInput} id="group-name" type="text" autoComplete="off" />
         <label className={styles.popupLabel}>Choose color for your group:</label>
         <ColorPickerComponent colors={colors} />
       </PopupComponent>

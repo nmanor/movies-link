@@ -68,3 +68,27 @@ export async function getGroupSalt(groupId) {
     return {};
   }
 }
+
+export async function addMovieToGroup(groupId, movieId, watchDate) {
+  try {
+    const query = `MATCH (g:Group {id: $groupId}), (m:Movie {id: $movieId})
+                   MERGE (g)-[:WATCHED {date: $watchDate}]->(m)`;
+    await write(query, { groupId, movieId, watchDate });
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+}
+
+export async function removeMovieFromGroup(groupId, movieId) {
+  try {
+    const query = `MATCH (:Group {id: $groupId})-[w:WATCHED]->(:Movie {id: $movieId})
+                   DELETE w`;
+    await write(query, { groupId, movieId });
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+}
