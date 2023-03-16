@@ -1,70 +1,71 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
-import Image from 'next/image';
-import { Parallax } from 'react-scroll-parallax';
+import { Parallax, ParallaxBanner } from 'react-scroll-parallax';
 import Link from 'next/link';
 import styles from './MovieItemComponent.module.css';
-import extractBrightestColor, { colorLightening } from '../../../utils/colorExtractor';
+import { groupNameToAcronyms } from '../../../utils/utils';
 
 const cx = classNames.bind(styles);
-const RGB_FACTOR = 1.2;
 
 export default function MovieItemComponent({
-  noLine, priority, movie: {
+  showDay,
+  showMonth,
+  showYear,
+  movie: {
     name, posterUrl, date, id, ref, groupName, groupColor,
   },
 }) {
-  const [accentColor, setAccentColor] = useState('#FFF');
-  const updateAccentColor = async () => {
-    const color = await extractBrightestColor(posterUrl);
-    const lighterColor = colorLightening(color, RGB_FACTOR);
-    setAccentColor(lighterColor);
-  };
-  useEffect(() => { updateAccentColor(); }, [posterUrl]);
-
   return (
-    <Parallax speed={-8}>
-      <Link className={styles.container} href={`/movie/${id}`} ref={ref}>
-        <div className={styles.lineContainer}>
-          <div className={styles.circle} style={{ backgroundColor: accentColor }} />
-          <div className={cx(styles.line, { [styles.invisible]: noLine })} />
+    <div className={styles.container}>
+      <div className={styles.sidebar}>
+        <div className={styles.date}>
+          <p className={cx({ [styles.show]: showYear })}>
+            {date ? date.getFullYear() : '.'}
+          </p>
+          <p className={cx({ [styles.show]: showMonth })}>
+            {date ? date.toLocaleString('en', { month: 'short' }).toUpperCase() : '.'}
+          </p>
+          <p className={cx({ [styles.show]: showDay })}>
+            {String(date ? date.getDate() : 0).padStart(2, '0')}
+          </p>
         </div>
-        <div className={styles.content}>
-          <h1 style={{ color: accentColor }}>{name}</h1>
-
-          <p>{date ? `You watched this title on ${date.toLocaleDateString('he-IL')}` : 'No watch date specified'}</p>
-          {groupColor && groupName && (
+        <div className={styles.line} />
+      </div>
+      <Parallax scale={[0.9, 1]} className={styles.parallax}>
+        <Link className={styles.movieCard} href={`/movie/${id}`} ref={ref}>
+          <ParallaxBanner
+            layers={[{ image: posterUrl, speed: 2 }]}
+            className={styles.movieImage}
+          />
+          <div className={styles.blurredEdge} />
+          <div className={styles.movieDetails}>
+            <h3>{name}</h3>
+          </div>
+          {groupName && groupColor && (
           <p
-            className={styles.groupTag}
-            style={{ color: groupColor, border: `${groupColor} 2px solid` }}
+            className={styles.groupIcon}
+            style={{ backgroundColor: groupColor }}
           >
-            {groupName}
+            {groupNameToAcronyms(groupName)}
           </p>
           )}
-        </div>
-        <Parallax scale={[0.8, 1.1, 'easeInOut']}>
-          <Image
-            src={posterUrl}
-            alt={`Image of ${name}`}
-            width={110}
-            height={150}
-            priority={priority}
-          />
-        </Parallax>
-      </Link>
-    </Parallax>
+        </Link>
+      </Parallax>
+    </div>
   );
 }
 
 MovieItemComponent.propTypes = {
-  noLine: PropTypes.bool,
+  showDay: PropTypes.bool,
+  showMonth: PropTypes.bool,
+  showYear: PropTypes.bool,
   movie: PropTypes.instanceOf(Object),
-  priority: PropTypes.bool,
 };
 
 MovieItemComponent.defaultProps = {
-  noLine: false,
+  showDay: false,
+  showMonth: false,
+  showYear: false,
   movie: {},
-  priority: false,
 };

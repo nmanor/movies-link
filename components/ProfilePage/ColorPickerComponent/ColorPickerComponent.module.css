@@ -1,0 +1,49 @@
+.container {
+    --circle-size: 40px;
+    --border-gap: calc(var(--circle-size) + 15px);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--circle-size), 1fr));
+    gap: 2px 10px;
+    margin: 5px 0 20px 0;
+}
+
+.color {
+    width: var(--border-gap);
+    height: var(--border-gap);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.color input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.colorCircle {
+    width: var(--circle-size);
+    height: var(--circle-size);
+    border-radius: 50%;
+}
+
+.checkmark {
+    width: var(--border-gap);
+    height: var(--border-gap);
+    border-radius: 50%;
+    position: absolute;
+    opacity: 0;
+    transition: opacity 200ms;
+}
+
+.svgIcon {
+    width: 20px;
+    height: 20px;
+    fill: var(--background-color);
+}
+
+.color input:checked ~ .checkmark {
+    opacity: 1;
+}
