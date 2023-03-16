@@ -1,34 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import { Parallax, ParallaxBanner } from 'react-scroll-parallax';
 import Link from 'next/link';
 import styles from './MovieItemComponent.module.css';
-import extractBrightestColor, { colorLightening } from '../../../utils/colorExtractor';
+import { groupNameToAcronyms } from '../../../utils/utils';
 
 const cx = classNames.bind(styles);
-const RGB_FACTOR = 1.2;
 
 export default function MovieItemComponent({
-  noLine, priority, movie: {
+  showDay,
+  showMonth,
+  showYear,
+  movie: {
     name, posterUrl, date, id, ref, groupName, groupColor,
   },
 }) {
-  const [accentColor, setAccentColor] = useState('#FFF');
-  const updateAccentColor = async () => {
-    const color = await extractBrightestColor(posterUrl);
-    const lighterColor = colorLightening(color, RGB_FACTOR);
-    setAccentColor(lighterColor);
-  };
-  useEffect(() => { updateAccentColor(); }, [posterUrl]);
-
   return (
     <div className={styles.container}>
       <div className={styles.sidebar}>
         <div className={styles.date}>
-          <p>{date ? date.getFullYear() : '0000'}</p>
-          <p>{date ? date.toLocaleString('en', { month: 'short' }).toUpperCase() : 'XXX'}</p>
-          <p>{String(date ? date.getDate() : 0).padStart(2, '0')}</p>
+          <p className={cx({ [styles.show]: showYear })}>
+            {date ? date.getFullYear() : '.'}
+          </p>
+          <p className={cx({ [styles.show]: showMonth })}>
+            {date ? date.toLocaleString('en', { month: 'short' }).toUpperCase() : '.'}
+          </p>
+          <p className={cx({ [styles.show]: showDay })}>
+            {String(date ? date.getDate() : 0).padStart(2, '0')}
+          </p>
         </div>
         <div className={styles.line} />
       </div>
@@ -43,12 +43,12 @@ export default function MovieItemComponent({
             <h3>{name}</h3>
           </div>
           {groupName && groupColor && (
-          <div className={styles.groupTag}>
-            <p style={{ color: colorLightening(groupColor, 0.85) }}>Watched along with</p>
-            <p style={{ backgroundColor: groupColor }}>
-              {groupName}
-            </p>
-          </div>
+          <p
+            className={styles.groupIcon}
+            style={{ backgroundColor: groupColor }}
+          >
+            {groupNameToAcronyms(groupName)}
+          </p>
           )}
         </Link>
       </Parallax>
@@ -57,13 +57,15 @@ export default function MovieItemComponent({
 }
 
 MovieItemComponent.propTypes = {
-  noLine: PropTypes.bool,
+  showDay: PropTypes.bool,
+  showMonth: PropTypes.bool,
+  showYear: PropTypes.bool,
   movie: PropTypes.instanceOf(Object),
-  priority: PropTypes.bool,
 };
 
 MovieItemComponent.defaultProps = {
-  noLine: false,
+  showDay: false,
+  showMonth: false,
+  showYear: false,
   movie: {},
-  priority: false,
 };
