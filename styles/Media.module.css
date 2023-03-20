@@ -74,6 +74,7 @@
     font-size: 1em;
     gap: 5px;
     color: gray;
+    flex-wrap: wrap;
 }
 
 .loadMoreActors button {

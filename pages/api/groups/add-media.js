@@ -1,16 +1,17 @@
 import { withIronSessionApiRoute } from 'iron-session/next';
+import { HttpStatusCode } from 'axios';
 import cookiesSettings from '../../../utils/cookies';
 import { addMediaToGroup } from '../../../dal/groups';
 
 async function handler(req, res) {
   try {
     if (req.method !== 'POST') {
-      return res.status(405).send({ message: 'Only POST requests allowed' });
+      return res.status(HttpStatusCode.MethodNotAllowed).send({ message: 'Only POST requests allowed' });
     }
 
     const { user } = req.session;
     if (!user) {
-      return res.status(403).send({ message: 'User not logged in' });
+      return res.status(HttpStatusCode.Forbidden).send({ message: 'User not logged in' });
     }
 
     const { groupId, movieId, watchDate } = req.body;

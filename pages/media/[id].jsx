@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { PropTypes } from 'prop-types';
-import axios from 'axios';
+import axios, { HttpStatusCode } from 'axios';
 import { ParallaxBanner, ParallaxProvider } from 'react-scroll-parallax';
 import extractBrightestColor from '../../utils/colorExtractor';
 import ButtonComponent from '../../components/shared/ButtonComponent/ButtonComponent';
@@ -334,7 +334,7 @@ export default function Media({
                     style={{ color: accentColor }}
                     onClick={handleLoadAllActorsClick}
                   >
-                    load the rest of the actors
+                    see the rest of the actors
                   </button>
                 </div>
               )}
@@ -382,13 +382,22 @@ export const getServerSideProps = getServerSidePropsLoginMiddleware(async (conte
     const { user } = context.req.session;
     const { id } = context.query;
 
-    const res = await axios.post(`${process.env.BASE_URL}/api/media/${id}`, { user: user.googleId });
-    let data = {};
-    if (res.status === 200) {
-      data = res.data;
+    const [mediaResponse, groupsResponse] = await Promise.all([
+      axios.post(`${process.env.BASE_URL}/api/media/${id}`, { user: user.googleId }),
+      axios.post(`${process.env.BASE_URL}/api/groups/users-group`, { user: user.googleId }),
+    ]);
+
+    let media = {};
+    if (mediaResponse.status === HttpStatusCode.Ok) {
+      media = mediaResponse.data;
     }
 
-    return { props: { ...data, groups: user.groups } };
+    let groups = [];
+    if (groupsResponse.status === HttpStatusCode.Ok) {
+      groups = groupsResponse.data;
+    }
+
+    return { props: { ...media, groups } };
   } catch (e) {
     console.error(e);
     return redirectToPage('/404');

@@ -68,12 +68,12 @@ async function handler(req, res) {
   try {
     const { user: userId } = req.body;
     if (!userId) {
-      return res.status(403).send({ message: 'User not logged in' });
+      return res.status(HttpStatusCode.Forbidden).send({ message: 'User not logged in' });
     }
 
     const { mid: mediaId } = req.query;
     if (!mediaId) {
-      return res.status(404).redirect('/404');
+      return res.status(HttpStatusCode.UnprocessableEntity).send({ message: 'Missing media ID' });
     }
 
     const mediaType = getMediaType(mediaId);
@@ -108,6 +108,7 @@ async function handler(req, res) {
         media.numberOfSeasons = tmdbMedia.number_of_seasons;
       }
 
+      media.posterUrl = tmdbMedia.poster_path;
       media.firstAirDate = tmdbDateToJsDate(tmdbMedia.first_air_date).getFullYear();
       media.lastAirDate = tmdbMedia.status.toLowerCase() === 'ended'
         ? tmdbDateToJsDate(tmdbMedia.last_air_date).getFullYear()
