@@ -1,10 +1,13 @@
 .container {
     height: 100vh;
+    width: 100vw;
     color: white;
     background: linear-gradient(0deg, var(--gray-900) 0%, var(--gray-600) 60%);
     display: grid;
     grid-template: 1fr auto / 100%;
     overflow: hidden;
+    z-index: calc(var(--navigation-z-index) + 1);
+    position: fixed;
 }
 
 .title {

@@ -1,25 +1,28 @@
 import { read, write } from './neo4jDriver';
 
-export default async function getKnownActors(userId, movieId) {
+export default async function getKnownActors(userId, mediaId) {
   try {
-    const query = `MATCH (:User {googleId: $userId})-[:WATCHED]->(m:Movie)<-[:ACTED_IN]-(a:Actor)-[ai:ACTED_IN]->(:Movie {id: $movieId})
+    const query = `MATCH (:User {googleId: $userId})-[w:WATCHED|MEMBER_OF*1..2]->(m:Media)<-[:ACTED_IN]-
+                         (a:Actor)-[ai:ACTED_IN]->(:Media {id: $mediaId})
+                   WITH a, ai, m, LAST(w).date AS d
+                   ORDER BY d
                    RETURN a.id as id, 
                           a.name as name, 
                           a.profilePath as profilePath, 
-                          COUNT(m) as movies, 
-                          last(collect(m)).name as last, 
+                          COUNT(DISTINCT m) as media, 
+                          LAST(COLLECT(m)).name as last, 
                           ai.as AS character
-                   ORDER BY movies DESC`;
-    const result = await read(query, { userId, movieId });
-    return result.map((actor) => ({ ...actor, movies: Number(actor.movies) }));
+                   ORDER BY media DESC`;
+    const result = await read(query, { userId, mediaId });
+    return result.map((actor) => ({ ...actor, media: Number(actor.media) }));
   } catch (e) {
     return null;
   }
 }
 
-export async function addActorsToMovie(movieId, actors) {
+export async function addActorsToMedia(mediaId, actors) {
   try {
-    const params = { movieId };
+    const params = { mediaId };
     const merges = [];
 
     actors.forEach((actor, i) => {
@@ -40,7 +43,7 @@ export async function addActorsToMovie(movieId, actors) {
       merges.push(merge);
     });
 
-    const query = `MATCH (m:Movie {id: $movieId})
+    const query = `MATCH (m:Media {id: $mediaId})
                    ${merges.join('\n')}
                    RETURN true as result`;
 

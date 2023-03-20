@@ -47,7 +47,7 @@ Login.defaultProps = {
 
 export async function getServerSideProps() {
   try {
-    const response = await axios.get(`${process.env.BASE_URL}/api/movies/popular-images`);
+    const response = await axios.get(`${process.env.BASE_URL}/api/media/popular-images`);
     return { props: { images: response.data } };
   } catch (e) {
     console.error(e);

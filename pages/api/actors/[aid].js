@@ -1,5 +1,5 @@
 import axios from 'axios';
-import getWatchedMovies from '../../../dal/movies';
+import getWatchedMedias from '../../../dal/media';
 
 function genderIdToString(gender) {
   if (gender === 1) return 'Female';
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
             { instagram_id: instagram, facebook_id: facebook, twitter_id: twitter },
     }] = await axios.all(requests);
 
-    const watchedMovies = await getWatchedMovies(userId, Number(actorId));
+    const watchedMovies = await getWatchedMedias(userId, Number(actorId));
 
     const result = {
       id: actorId,

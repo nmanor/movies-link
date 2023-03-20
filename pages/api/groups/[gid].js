@@ -32,7 +32,7 @@ async function handler(req, res) {
         ...group,
         joinLink: `${process.env.BASE_URL}/group/${groupId}?join=${hashedId}`,
         userIsMember,
-        movies: group.movies
+        movies: group.media
           .map((movie) => ({
             ...movie,
             posterUrl: `https://www.themoviedb.org/t/p/w600_and_h900_bestv2${movie.posterUrl}`,

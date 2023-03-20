@@ -1,6 +1,6 @@
 import { withIronSessionApiRoute } from 'iron-session/next';
 import cookiesSettings from '../../../utils/cookies';
-import { addMovieToGroup } from '../../../dal/groups';
+import { addMediaToUser } from '../../../dal/media';
 
 async function handler(req, res) {
   try {
@@ -13,8 +13,8 @@ async function handler(req, res) {
       return res.status(403).send({ message: 'User not logged in' });
     }
 
-    const { groupId, movieId, watchDate } = req.body;
-    const success = await addMovieToGroup(groupId, movieId, watchDate);
+    const { movieId, watchDate } = req.body;
+    const success = await addMediaToUser(user.googleId, movieId, watchDate);
 
     return res.json({ success });
   } catch (e) {

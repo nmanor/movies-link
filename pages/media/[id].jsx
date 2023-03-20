@@ -6,19 +6,21 @@ import extractBrightestColor from '../../utils/colorExtractor';
 import ButtonComponent from '../../components/shared/ButtonComponent/ButtonComponent';
 import PopupComponent from '../../components/shared/PopupComponent/PopupComponent';
 import DatePickerComponent from '../../components/shared/DatePickerComponent/DatePickerComponent';
-import MovieMetadataComponent from '../../components/MoviePage/MovieMetadataComponent/MovieMetadataComponent';
+import MovieMetadataComponent from '../../components/MediaPage/MovieMetadataComponent/MovieMetadataComponent';
 import BackButtonComponent from '../../components/shared/BackButtonComponent/BackButtonComponent';
 import { ActorsListComponent } from '../../components/shared/ItemsListComponent/ItemsListComponent';
-import styles from '../../styles/Movie.module.css';
+import styles from '../../styles/Media.module.css';
 import getServerSidePropsLoginMiddleware from '../../middlware/getServerSidePropsLoginMiddleware';
 import redirectToPage from '../../utils/redirectToPage';
 import SnackbarComponent from '../../components/shared/SnackbarComponent/SnackbarComponent';
 import ExpanderComponent from '../../components/shared/ExpanderComponent/ExpanderComponent';
-import SwipeableListComponent, { ActionType } from '../../components/MoviePage/SwipeableListComponent/SwipeableListComponent';
+import SwipeableListComponent, { ActionType } from '../../components/MediaPage/SwipeableListComponent/SwipeableListComponent';
+import MediaType from '../../utils/enums';
+import SeriesMetadataComponent from '../../components/MediaPage/SeriesMetadataComponent/SeriesMetadataComponent';
 
 const SECOND = 1000;
 
-export default function Movie({
+export default function Media({
   id,
   posterUrl,
   name,
@@ -27,6 +29,9 @@ export default function Movie({
   duration,
   knownActors,
   groups,
+  numberOfSeasons,
+  firstAirDate,
+  lastAirDate,
   watchedByGroups: initialWatchedByGroups,
   watchedByUser: initialWatchedByUser,
 }) {
@@ -69,13 +74,13 @@ export default function Movie({
     [popupOpen],
   );
 
-  const addMovie = useCallback(async (date) => {
+  const addMedia = useCallback(async (date) => {
     setLoading(true);
     setPopupOpen(false);
 
     const epoch = date ? date.getTime() : -1;
     const group = groups.find((g) => g.id === chosenGroup);
-    const url = group ? '/api/groups/add-movie' : '/api/movies/add-to-watched-list';
+    const url = group ? '/api/groups/add-media' : '/api/media/add-to-watched-list';
     const data = { movieId: id, watchDate: epoch };
     if (group) data.groupId = group.id;
 
@@ -90,16 +95,16 @@ export default function Movie({
 
       setLoading(false);
 
-      const msg = success ? 'The movie was successfully added' : 'Error adding the movie';
+      const msg = success ? 'The media was successfully added' : 'Error adding the media';
       openSnackbar(msg);
     }, 1000);
   }, []);
 
-  const removeMovie = useCallback(async () => {
+  const removeMedia = useCallback(async () => {
     setLoading(true);
 
     const group = watchedByGroups.find((g) => g.id === chosenGroup);
-    const url = group ? '/api/groups/remove-movie' : '/api/movies/remove-from-watched-list';
+    const url = group ? '/api/groups/remove-media' : '/api/media/remove-from-watched-list';
     const data = { movieId: id };
     let { date } = watchedByUser;
 
@@ -121,10 +126,10 @@ export default function Movie({
 
       setLoading(false);
 
-      const msg = success ? 'The movie was successfully removed' : 'Error removing the movie';
+      const msg = success ? 'The media was successfully removed' : 'Error removing the media';
       const undoRemove = () => {
         chosenGroup = chosenGroupCopy;
-        addMovie(new Date(date));
+        addMedia(new Date(date));
       };
       openSnackbar(msg, 10 * SECOND, () => undoRemove);
     }, 1000);
@@ -135,7 +140,7 @@ export default function Movie({
   const changeChosenGroup = (groupId) => { chosenGroup = groupId !== -1 ? groupId : null; };
   const handleOnRemoveSwipe = useCallback((groupId) => {
     changeChosenGroup(groupId);
-    removeMovie();
+    removeMedia();
   }, []);
   const handleOnAddSwipe = useCallback((groupId) => {
     changeChosenGroup(groupId);
@@ -146,7 +151,7 @@ export default function Movie({
     <ButtonComponent
       loading={loading}
       accentColor={accentColor}
-      onClick={watchedByUser.date ? removeMovie : changePopupState}
+      onClick={watchedByUser.date ? removeMedia : changePopupState}
     >
       {`${watchedByUser.date ? 'Remove from' : 'Add to'} my watched list`}
     </ButtonComponent>
@@ -207,7 +212,7 @@ export default function Movie({
   };
 
   const renderAddToWatchlistController = () => {
-    // if the user watched the movie with group, return expander
+    // if the user watched the media with group, return expander
     if (watchedByGroups && watchedByGroups.length !== 0) {
       return renderExpander();
     }
@@ -239,10 +244,10 @@ export default function Movie({
 
         <PopupComponent
           isOpen={popupOpen}
-          title="When did you watch the movie?"
+          title={`When did you watch the ${mediaType}?`}
           positiveButtonText="Save"
           onNegativeClick={changePopupState}
-          onPositiveClick={addMovie}
+          onPositiveClick={addMedia}
           accentColor={accentColor}
         >
           <DatePickerComponent accentColor={accentColor} allowUndefined />
@@ -256,12 +261,24 @@ export default function Movie({
           <div className={styles.containerCorner} />
           <div className={styles.header}>
             <h1>{name}</h1>
-            <MovieMetadataComponent
-              mediaType={mediaType}
-              distributionYear={distributionYear}
-              duration={duration}
-              accentColor={accentColor}
-            />
+            {mediaType === MediaType.Movie
+              ? (
+                <MovieMetadataComponent
+                  mediaType={mediaType}
+                  distributionYear={distributionYear}
+                  duration={duration}
+                  accentColor={accentColor}
+                />
+              )
+              : (
+                <SeriesMetadataComponent
+                  mediaType={mediaType}
+                  firstAirDate={firstAirDate}
+                  lastAirDate={lastAirDate}
+                  numberOfSeasons={numberOfSeasons}
+                  accentColor={accentColor}
+                />
+              )}
             {renderAddToWatchlistController(watchedByUser, watchedByGroups)}
           </div>
 
@@ -293,7 +310,7 @@ export default function Movie({
   );
 }
 
-Movie.propTypes = {
+Media.propTypes = {
   id: PropTypes.string,
   posterUrl: PropTypes.string,
   name: PropTypes.string,
@@ -304,9 +321,12 @@ Movie.propTypes = {
   knownActors: PropTypes.arrayOf(Object),
   groups: PropTypes.arrayOf(Object),
   watchedByGroups: PropTypes.arrayOf(Object),
+  numberOfSeasons: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  firstAirDate: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  lastAirDate: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
-Movie.defaultProps = {
+Media.defaultProps = {
   id: '0',
   posterUrl: '',
   name: 'unknown',
@@ -317,6 +337,9 @@ Movie.defaultProps = {
   knownActors: [],
   groups: [],
   watchedByGroups: [],
+  numberOfSeasons: 'unknown',
+  firstAirDate: 'unknown',
+  lastAirDate: 'unknown',
 };
 
 export const getServerSideProps = getServerSidePropsLoginMiddleware(async (context) => {
@@ -324,7 +347,7 @@ export const getServerSideProps = getServerSidePropsLoginMiddleware(async (conte
     const { user } = context.req.session;
     const { id } = context.query;
 
-    const res = await axios.post(`${process.env.BASE_URL}/api/movies/${id}`, { user: user.googleId });
+    const res = await axios.post(`${process.env.BASE_URL}/api/media/${id}`, { user: user.googleId });
     let data = {};
     if (res.status === 200) {
       data = res.data;
@@ -332,6 +355,7 @@ export const getServerSideProps = getServerSidePropsLoginMiddleware(async (conte
 
     return { props: { ...data, groups: user.groups } };
   } catch (e) {
+    console.error(e);
     return redirectToPage('/404');
   }
 });

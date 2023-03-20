@@ -41,13 +41,13 @@ export async function removeUserFromGroup(userId, groupId) {
 export async function getGroupData(groupId) {
   try {
     const query = `MATCH (g:Group {id: $groupId})
-                   OPTIONAL MATCH (g)-[:WATCHED]->(m:Movie)
+                   OPTIONAL MATCH (g)-[:WATCHED]->(m:Media)
                    OPTIONAL MATCH (u:User)-[:MEMBER_OF]->(g)
                    RETURN g.id AS id, 
                           g.name AS name, 
                           g.color AS accentColor, 
                           g.salt AS salt, 
-                          COLLECT(DISTINCT m{.posterUrl, .name, .id}) AS movies, 
+                          COLLECT(DISTINCT m{.posterUrl, .name, .id}) AS media, 
                           COLLECT(DISTINCT u{.firstName, .lastName, .image, .googleId}) AS members`;
     const response = await read(query, { groupId });
     return response[0];
@@ -69,11 +69,11 @@ export async function getGroupSalt(groupId) {
   }
 }
 
-export async function addMovieToGroup(groupId, movieId, watchDate) {
+export async function addMediaToGroup(groupId, mediaId, watchDate) {
   try {
-    const query = `MATCH (g:Group {id: $groupId}), (m:Movie {id: $movieId})
+    const query = `MATCH (g:Group {id: $groupId}), (m:Media {id: $mediaId})
                    MERGE (g)-[:WATCHED {date: $watchDate}]->(m)`;
-    await write(query, { groupId, movieId, watchDate });
+    await write(query, { groupId, mediaId, watchDate });
     return true;
   } catch (e) {
     console.error(e);
@@ -81,11 +81,11 @@ export async function addMovieToGroup(groupId, movieId, watchDate) {
   }
 }
 
-export async function removeMovieFromGroup(groupId, movieId) {
+export async function removeMediaFromGroup(groupId, mediaId) {
   try {
-    const query = `MATCH (:Group {id: $groupId})-[w:WATCHED]->(:Movie {id: $movieId})
+    const query = `MATCH (:Group {id: $groupId})-[w:WATCHED]->(:Media {id: $mediaId})
                    DELETE w`;
-    await write(query, { groupId, movieId });
+    await write(query, { groupId, mediaId });
     return true;
   } catch (e) {
     console.error(e);

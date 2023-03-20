@@ -2,7 +2,7 @@ import React from 'react';
 import { PropTypes } from 'prop-types';
 import { Parallax } from 'react-scroll-parallax';
 import ActorComponent from '../ActorComponent/ActorComponent';
-import MovieComponent from '../MovieComponent/MovieComponent';
+import MediaComponent from '../MediaComponent/MediaComponent';
 import styles from './ItemsListComponent.module.css';
 
 export const ListType = {
@@ -26,9 +26,9 @@ export default function ItemsListComponent({
 
     if (listType === ListType.MovieList) {
       return (
-        <MovieComponent
+        <MediaComponent
           key={item.id}
-          movie={item}
+          media={item}
           accentColor={accentColor}
         />
       );
