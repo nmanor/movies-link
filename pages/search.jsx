@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ParallaxProvider } from 'react-scroll-parallax';
 import axios, { HttpStatusCode } from 'axios';
 import styles from '../styles/Search.module.css';
 import SearchBoxComponent from '../components/SearchPage/SearchBoxComponent/SearchBoxComponent';
@@ -9,6 +8,7 @@ import getServerSidePropsLoginMiddleware from '../middlware/getServerSidePropsLo
 
 export default function Search() {
   const [isLoading, setIsLoading] = useState(false);
+  const [noResults, setNoResults] = useState(false);
   const [results, setResults] = useState([]);
   const [query, setQuery] = useState('');
   const [title, setTitle] = useState('Search');
@@ -24,6 +24,7 @@ export default function Search() {
       const { status, data } = await axios.get(`/api/search?query=${encodeURIComponent(term)}`);
       if (status === HttpStatusCode.Ok) {
         setResults(data);
+        setNoResults(!data || data.length === 0);
         setTitle(`Search of ${term}`);
       }
     }
@@ -37,17 +38,16 @@ export default function Search() {
   return (
     <>
       <title>{title}</title>
-      <ParallaxProvider>
-        <div className={styles.container}>
-          <SearchBoxComponent
-            value={query}
-            onChange={changeHandler}
-            isLoading={isLoading}
-            placeholder="Search"
-          />
-          <ResultsListComponent resultsList={results} />
-        </div>
-      </ParallaxProvider>
+      <SearchBoxComponent
+        value={query}
+        onChange={changeHandler}
+        isLoading={isLoading}
+        placeholder="Search"
+      />
+      <div className={styles.container}>
+        {noResults && <h3 className={styles.noResults}>No results found</h3>}
+        <ResultsListComponent resultsList={results} />
+      </div>
     </>
   );
 }
