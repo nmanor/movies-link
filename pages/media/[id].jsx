@@ -44,6 +44,7 @@ export default function Media({
   const [popupOpen, setPopupOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [expanderOpen, setExpanderOpen] = useState(false);
+  const [allActors, setAllActors] = useState([]);
 
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -145,6 +146,17 @@ export default function Media({
   const handleOnAddSwipe = useCallback((groupId) => {
     changeChosenGroup(groupId);
     setTimeout(() => setPopupOpen(true), 500);
+  }, []);
+
+  const handleLoadAllActorsClick = useCallback(async () => {
+    try {
+      const response = await axios.post('/api/media/all-actors', { mediaId: id, numberOfSeasons });
+      const actors = response.data.actors
+        .filter((a1) => !knownActors.find((a2) => a2.id === a1.id));
+      setAllActors(actors);
+    } catch (e) {
+      openSnackbar('Error fetching the actors');
+    }
   }, []);
 
   const renderButton = () => (
@@ -302,6 +314,29 @@ export default function Media({
                     .sort((p1, p2) => p2.totalNumOfMovies - p1.totalNumOfMovies)}
                   accentColor={accentColor}
                 />
+              )}
+          </div>
+
+          <div className={styles.playersSection}>
+            {allActors.length > 0
+              ? (
+                <ActorsListComponent
+                  title="Other actors"
+                  items={allActors}
+                  accentColor={accentColor}
+                />
+              )
+              : (
+                <div className={styles.loadMoreActors}>
+                  Want to see more?
+                  <button
+                    type="button"
+                    style={{ color: accentColor }}
+                    onClick={handleLoadAllActorsClick}
+                  >
+                    load the rest of the actors
+                  </button>
+                </div>
               )}
           </div>
         </article>

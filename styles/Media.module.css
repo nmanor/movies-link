@@ -65,3 +65,20 @@
     border-radius: 5px;
     margin: 10px 20px 20px;
 }
+
+.loadMoreActors {
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1em;
+    gap: 5px;
+    color: gray;
+}
+
+.loadMoreActors button {
+    border: none;
+    outline: none;
+    font-size: 1em;
+    background-color: transparent;
+}
