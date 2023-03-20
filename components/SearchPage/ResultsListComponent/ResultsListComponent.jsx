@@ -11,6 +11,7 @@ function ResultsListComponent({ resultsList }) {
           key={entry.id}
           data={entry}
           priority={i <= 10}
+          delay={i * 100}
         />
       ))}
     </div>
