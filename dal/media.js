@@ -123,3 +123,15 @@ export async function getUserTimeline(userId) {
     return [];
   }
 }
+
+export async function updateNumberOfSeasons(seriesId, numberOfSeasons) {
+  try {
+    const query = `MATCH (s:Series {id: $seriesId})
+                   SET s.numberOfSeasons = $numberOfSeasons`;
+    await write(query, { seriesId, numberOfSeasons });
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+}

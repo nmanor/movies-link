@@ -4,12 +4,13 @@ import tmdbDateToJsDate from '../../../utils/dates';
 import cookiesSettings from '../../../utils/cookies';
 import getKnownActors, { addActorsToMedia } from '../../../dal/actors';
 import {
-  createMovie, createSeries, findMovie, findSeries,
+  createMovie, createSeries, findMovie, findSeries, updateNumberOfSeasons,
 } from '../../../dal/media';
 import MediaType from '../../../utils/enums';
 
 const HOUR = 60;
 const MAX_ACTORS = 20;
+let promises = [];
 
 const processCast = (cast) => cast
   .filter((member) => member.known_for_department.toLowerCase() === 'acting')
@@ -22,17 +23,17 @@ const processCast = (cast) => cast
     profilePath: actor.profile_path,
   }));
 
-async function fetchMovieActors(mediaId) {
+async function saveMovieActors(mediaId) {
   const response = await axios.get(`https://api.themoviedb.org/3/movie/${mediaId.slice(1)}/credits?api_key=${process.env.TMDB_KEY}`);
   const { data: { cast } } = response;
-  return processCast(cast);
+  await addActorsToMedia(mediaId, processCast(cast));
 }
 
-async function fetchSeriesActors(series, tmdbSeries, seriesId) {
+async function updateSeriesActors(series, tmdbSeries, seriesId) {
   const prevNumberOfSeasons = series ? series.numberOfSeasons || 0 : 0;
   const newNumberOfSeasons = tmdbSeries.number_of_seasons;
 
-  if (prevNumberOfSeasons === newNumberOfSeasons) return null;
+  if (prevNumberOfSeasons === newNumberOfSeasons) return;
 
   const requests = [];
   for (let season = prevNumberOfSeasons + 1; season <= newNumberOfSeasons; season += 1) {
@@ -45,7 +46,7 @@ async function fetchSeriesActors(series, tmdbSeries, seriesId) {
     .forEach(({ data: { cast } }) => cast
       .forEach((member) => actors.add(member)));
 
-  return processCast([...new Set(actors)]);
+  if (actors) await addActorsToMedia(seriesId, processCast([...new Set(actors)]));
 }
 
 async function storeMovieInDB(mediaId) {
@@ -98,16 +99,15 @@ async function handler(req, res) {
 
     const mediaType = mediaId.startsWith('m') ? MediaType.Movie : MediaType.Series;
 
+    promises = [];
     let media;
     if (mediaType === MediaType.Movie) {
       media = await findMovie(mediaId, userId);
       if (!media) {
-        let actors;
-        [media, actors] = await Promise
-          .all([storeMovieInDB(mediaId), fetchMovieActors(mediaId)]);
+        promises.push(saveMovieActors(mediaId));
+        media = await storeMovieInDB(mediaId);
         media.watchedByUser = { date: null };
         media.watchedByGroups = [];
-        await addActorsToMedia(mediaId, actors);
       }
     } else {
       let tmdbMedia;
@@ -118,23 +118,25 @@ async function handler(req, res) {
 
       tmdbMedia = tmdbMedia.data;
 
-      // fetch the actors before attaching the number of seasons to the series
-      const actors = await fetchSeriesActors(media, tmdbMedia, mediaId);
+      promises.push(updateSeriesActors(media, tmdbMedia, mediaId));
 
-      // TODO: Update the number of seasons if changed
       if (!media) {
         media = await storeSeriesInDB(mediaId, tmdbMedia);
         media.watchedByUser = { date: null };
         media.watchedByGroups = [];
+      } else if (media.numberOfSeasons !== tmdbMedia.number_of_seasons) {
+        promises.push(updateNumberOfSeasons(mediaId, tmdbMedia.number_of_seasons));
+        media.numberOfSeasons = tmdbMedia.number_of_seasons;
       }
 
       media.firstAirDate = tmdbDateToJsDate(tmdbMedia.first_air_date).getFullYear();
       media.lastAirDate = tmdbMedia.status.toLowerCase() === 'ended'
         ? tmdbDateToJsDate(tmdbMedia.last_air_date).getFullYear()
         : 'present';
-
-      if (actors) await addActorsToMedia(mediaId, actors);
     }
+
+    // wait for all the async functions to finish
+    await Promise.all(promises);
 
     let actors = await getKnownActors(userId, mediaId);
     actors = actors.map((actor) => ({
