@@ -4,6 +4,6 @@
  * @returns {Date} JavaScript date object
  */
 export default function tmdbDateToJsDate(date) {
-  const [year, day, month] = date.split('-').map(Number);
+  const [year, month, day] = date.split('-').map(Number);
   return new Date(year, month - 1, day);
 }

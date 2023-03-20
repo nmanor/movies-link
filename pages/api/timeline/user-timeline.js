@@ -1,6 +1,6 @@
 import { withIronSessionApiRoute } from 'iron-session/next';
 import cookiesSettings from '../../../utils/cookies';
-import { getUserTimeline } from '../../../dal/movies';
+import { getUserTimeline } from '../../../dal/media';
 
 async function handler(req, res) {
   if (req.method !== 'POST') {

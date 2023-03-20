@@ -1,0 +1,19 @@
+.metadataContainer {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    justify-content: space-between;
+}
+
+.metadataItem {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.svgIcon {
+    height: 1.3rem;
+    width: 1.3rem;
+    fill: white;
+}

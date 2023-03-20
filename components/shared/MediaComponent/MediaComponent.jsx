@@ -2,10 +2,10 @@ import React from 'react';
 import { PropTypes } from 'prop-types';
 import Image from 'next/image';
 import ClickableListItemComponent from '../ClickableListItemComponent/ClickableListItemComponent';
-import styles from './MovieComponent.module.css';
+import styles from './MediaComponent.module.css';
 
-function MovieComponent({
-  movie: {
+function MediaComponent({
+  media: {
     id,
     posterUrl,
     name,
@@ -15,7 +15,7 @@ function MovieComponent({
 }) {
   return (
     <ClickableListItemComponent
-      href={`/movie/${id}`}
+      href={`/media/${id}`}
       accentColor={accentColor}
     >
       <Image
@@ -34,14 +34,14 @@ function MovieComponent({
   );
 }
 
-MovieComponent.propTypes = {
-  movie: PropTypes.instanceOf(Object),
+MediaComponent.propTypes = {
+  media: PropTypes.instanceOf(Object),
   accentColor: PropTypes.string,
 };
 
-MovieComponent.defaultProps = {
-  movie: {},
+MediaComponent.defaultProps = {
+  media: {},
   accentColor: '#FFF',
 };
 
-export default MovieComponent;
+export default MediaComponent;

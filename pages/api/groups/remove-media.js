@@ -1,6 +1,6 @@
 import { withIronSessionApiRoute } from 'iron-session/next';
 import cookiesSettings from '../../../utils/cookies';
-import { removeMovieFromGroup } from '../../../dal/groups';
+import { removeMediaFromGroup } from '../../../dal/groups';
 
 async function handler(req, res) {
   try {
@@ -14,7 +14,7 @@ async function handler(req, res) {
     }
 
     const { groupId, movieId } = req.body;
-    const success = await removeMovieFromGroup(groupId, movieId);
+    const success = await removeMediaFromGroup(groupId, movieId);
 
     return res.json({ success });
   } catch (e) {

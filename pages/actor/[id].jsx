@@ -105,7 +105,7 @@ function Actor({
                 </p>
               ) : (
                 <MoviesListComponent
-                  title="Movies you watched"
+                  title="Media you watched"
                   items={watchedMovies.sort((m1, m2) => m2.watchDate - m1.watchDate)}
                   accentColor={accentColor}
                 />

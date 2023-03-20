@@ -21,7 +21,7 @@ function ResultComponent({
 
   return (
     <ClickableListItemComponent
-      href={`/${mediaType.toLowerCase()}/${id}`}
+      href={`/media/${id}`}
     >
       <Image
         className={styles.image}

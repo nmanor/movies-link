@@ -3,16 +3,16 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import { Parallax, ParallaxBanner } from 'react-scroll-parallax';
 import Link from 'next/link';
-import styles from './MovieItemComponent.module.css';
+import styles from './MediaItemComponent.module.css';
 import { groupNameToAcronyms } from '../../../utils/utils';
 
 const cx = classNames.bind(styles);
 
-export default function MovieItemComponent({
+export default function MediaItemComponent({
   showDay,
   showMonth,
   showYear,
-  movie: {
+  media: {
     name, posterUrl, date, id, ref, groupName, groupColor,
   },
 }) {
@@ -33,7 +33,7 @@ export default function MovieItemComponent({
         <div className={styles.line} />
       </div>
       <Parallax scale={[0.9, 1]} className={styles.parallax}>
-        <Link className={styles.movieCard} href={`/movie/${id}`} ref={ref}>
+        <Link className={styles.movieCard} href={`/media/${id}`} ref={ref}>
           <ParallaxBanner
             layers={[{ image: posterUrl, speed: 2 }]}
             className={styles.movieImage}
@@ -56,16 +56,16 @@ export default function MovieItemComponent({
   );
 }
 
-MovieItemComponent.propTypes = {
+MediaItemComponent.propTypes = {
   showDay: PropTypes.bool,
   showMonth: PropTypes.bool,
   showYear: PropTypes.bool,
-  movie: PropTypes.instanceOf(Object),
+  media: PropTypes.instanceOf(Object),
 };
 
-MovieItemComponent.defaultProps = {
+MediaItemComponent.defaultProps = {
   showDay: false,
   showMonth: false,
   showYear: false,
-  movie: {},
+  media: {},
 };

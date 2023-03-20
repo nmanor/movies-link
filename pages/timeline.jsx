@@ -3,7 +3,7 @@ import { ParallaxProvider } from 'react-scroll-parallax';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import styles from '../styles/Timeline.module.css';
-import MovieItemComponent from '../components/TimelinePage/MovieItemComponent/MovieItemComponent';
+import MediaItemComponent from '../components/TimelinePage/MediaItemComponent/MediaItemComponent';
 import getServerSidePropsLoginMiddleware from '../middlware/getServerSidePropsLoginMiddleware';
 import redirectToPage from '../utils/redirectToPage';
 
@@ -12,12 +12,12 @@ export default function Timeline({ data }) {
   const months = new Set();
   const years = new Set();
 
-  const [movies, setMovies] = useState([]);
+  const [media, setMedia] = useState([]);
   dates.clear();
   months.clear();
   years.clear();
   useEffect(() => {
-    setMovies(data
+    setMedia(data
       .sort((a, b) => b.date - a.date)
       .map((movie) => ({
         ...movie,
@@ -25,27 +25,27 @@ export default function Timeline({ data }) {
       })));
   }, [data]);
 
-  const renderMovie = (movie) => {
-    const day = movie.date ? movie.date.getTime() : null;
+  const renderMovie = (entry) => {
+    const day = entry.date ? entry.date.getTime() : null;
     const firstOfDay = !dates.has(day);
     dates.add(day);
 
-    const month = movie.date ? new Date(movie.date.getFullYear(), movie.date.getMonth())
+    const month = entry.date ? new Date(entry.date.getFullYear(), entry.date.getMonth())
       .getTime() : null;
     const firstOfMonth = !months.has(month);
     months.add(month);
 
-    const year = movie.date ? movie.date.getFullYear() : null;
+    const year = entry.date ? entry.date.getFullYear() : null;
     const firstOfYear = !years.has(year);
     years.add(year);
 
     return (
-      <MovieItemComponent
+      <MediaItemComponent
         showDay={firstOfDay}
         showMonth={firstOfMonth}
         showYear={firstOfYear}
-        key={`${movie.id}${movie.groupName ? movie.groupName.replace(/\s+/g, '') : ''}`}
-        movie={movie}
+        key={`${entry.id}${entry.groupName ? entry.groupName.replace(/\s+/g, '') : ''}`}
+        media={entry}
       />
     );
   };
@@ -61,7 +61,7 @@ export default function Timeline({ data }) {
             movies you&apos;ve added to your movie list.
           </p>
         </div>
-        {movies.map(renderMovie)}
+        {media.map(renderMovie)}
       </div>
     </ParallaxProvider>
   );
