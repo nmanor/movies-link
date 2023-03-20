@@ -1,10 +1,11 @@
 .container {
     --sidebar-width: 90px;
+    --card-background-color: rgba(255, 255, 255, 0.2);
     color: white;
     background-attachment: fixed;
     background-image: url("/images/timeline-background.jpg");
     background-size: cover;
-    --card-background-color: rgba(255, 255, 255, 0.2);
+    padding-bottom: var(--padding-bottom);
 }
 
 .container > p {
