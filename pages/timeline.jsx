@@ -25,7 +25,7 @@ export default function Timeline({ data }) {
       })));
   }, [data]);
 
-  const renderMovie = (entry) => {
+  const renderMedia = (entry) => {
     const day = entry.date ? entry.date.getTime() : null;
     const firstOfDay = !dates.has(day);
     dates.add(day);
@@ -61,7 +61,7 @@ export default function Timeline({ data }) {
             movies you&apos;ve added to your movie list.
           </p>
         </div>
-        {media.map(renderMovie)}
+        {media.map(renderMedia)}
       </div>
     </ParallaxProvider>
   );

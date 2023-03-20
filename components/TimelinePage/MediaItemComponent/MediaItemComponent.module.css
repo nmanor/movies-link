@@ -104,7 +104,7 @@
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    gap: 10px;
+    gap: 5px;
 }
 
 .movieDetails h3 {
@@ -116,6 +116,12 @@
     overflow: hidden;
     white-space: pre-wrap;
     text-overflow: ellipsis;
+}
+
+.svgIcon {
+    fill: white;
+    width: 25px;
+    height: 25px;
 }
 
 .groupIcon {

@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import { Parallax, ParallaxBanner } from 'react-scroll-parallax';
 import Link from 'next/link';
+import MediaType from '../../../utils/enums';
 import styles from './MediaItemComponent.module.css';
 import { groupNameToAcronyms } from '../../../utils/utils';
+import TvSVGComponent from '../../shared/svg/TvSVGComponent';
+import CameraSVGComponent from '../../shared/svg/CameraSVGComponent';
 
 const cx = classNames.bind(styles);
 
@@ -13,7 +16,7 @@ export default function MediaItemComponent({
   showMonth,
   showYear,
   media: {
-    name, posterUrl, date, id, ref, groupName, groupColor,
+    name, posterUrl, date, id, mediaType, groupName, groupColor,
   },
 }) {
   return (
@@ -33,13 +36,16 @@ export default function MediaItemComponent({
         <div className={styles.line} />
       </div>
       <Parallax scale={[0.9, 1]} className={styles.parallax}>
-        <Link className={styles.movieCard} href={`/media/${id}`} ref={ref}>
+        <Link className={styles.movieCard} href={`/media/${id}`}>
           <ParallaxBanner
             layers={[{ image: posterUrl, speed: 2 }]}
             className={styles.movieImage}
           />
           <div className={styles.blurredEdge} />
           <div className={styles.movieDetails}>
+            {mediaType === MediaType.Movie
+              ? <CameraSVGComponent className={styles.svgIcon} />
+              : <TvSVGComponent className={styles.svgIcon} />}
             <h3>{name}</h3>
           </div>
           {groupName && groupColor && (
