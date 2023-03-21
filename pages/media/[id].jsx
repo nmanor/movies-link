@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { PropTypes } from 'prop-types';
-import axios from 'axios';
+import axios, { HttpStatusCode } from 'axios';
 import { ParallaxBanner, ParallaxProvider } from 'react-scroll-parallax';
 import extractBrightestColor from '../../utils/colorExtractor';
 import ButtonComponent from '../../components/shared/ButtonComponent/ButtonComponent';
@@ -44,6 +44,7 @@ export default function Media({
   const [popupOpen, setPopupOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [expanderOpen, setExpanderOpen] = useState(false);
+  const [allActors, setAllActors] = useState([]);
 
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -145,6 +146,17 @@ export default function Media({
   const handleOnAddSwipe = useCallback((groupId) => {
     changeChosenGroup(groupId);
     setTimeout(() => setPopupOpen(true), 500);
+  }, []);
+
+  const handleLoadAllActorsClick = useCallback(async () => {
+    try {
+      const response = await axios.post('/api/media/all-actors', { mediaId: id, numberOfSeasons });
+      const actors = response.data.actors
+        .filter((a1) => !knownActors.find((a2) => a2.id === a1.id));
+      setAllActors(actors);
+    } catch (e) {
+      openSnackbar('Error fetching the actors');
+    }
   }, []);
 
   const renderButton = () => (
@@ -304,6 +316,29 @@ export default function Media({
                 />
               )}
           </div>
+
+          <div className={styles.playersSection}>
+            {allActors.length > 0
+              ? (
+                <ActorsListComponent
+                  title="Other actors"
+                  items={allActors}
+                  accentColor={accentColor}
+                />
+              )
+              : (
+                <div className={styles.loadMoreActors}>
+                  Want to see more?
+                  <button
+                    type="button"
+                    style={{ color: accentColor }}
+                    onClick={handleLoadAllActorsClick}
+                  >
+                    see the rest of the actors
+                  </button>
+                </div>
+              )}
+          </div>
         </article>
       </ParallaxProvider>
     </>
@@ -347,13 +382,22 @@ export const getServerSideProps = getServerSidePropsLoginMiddleware(async (conte
     const { user } = context.req.session;
     const { id } = context.query;
 
-    const res = await axios.post(`${process.env.BASE_URL}/api/media/${id}`, { user: user.googleId });
-    let data = {};
-    if (res.status === 200) {
-      data = res.data;
+    const [mediaResponse, groupsResponse] = await Promise.all([
+      axios.post(`${process.env.BASE_URL}/api/media/${id}`, { user: user.googleId }),
+      axios.post(`${process.env.BASE_URL}/api/groups/users-group`, { user: user.googleId }),
+    ]);
+
+    let media = {};
+    if (mediaResponse.status === HttpStatusCode.Ok) {
+      media = mediaResponse.data;
     }
 
-    return { props: { ...data, groups: user.groups } };
+    let groups = [];
+    if (groupsResponse.status === HttpStatusCode.Ok) {
+      groups = groupsResponse.data;
+    }
+
+    return { props: { ...media, groups } };
   } catch (e) {
     console.error(e);
     return redirectToPage('/404');

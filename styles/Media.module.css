@@ -7,6 +7,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    padding-bottom: var(--padding-bottom);
 }
 
 .containerCorner {
@@ -64,4 +65,22 @@
     height: 1px;
     border-radius: 5px;
     margin: 10px 20px 20px;
+}
+
+.loadMoreActors {
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1em;
+    gap: 5px;
+    color: gray;
+    flex-wrap: wrap;
+}
+
+.loadMoreActors button {
+    border: none;
+    outline: none;
+    font-size: 1em;
+    background-color: transparent;
 }

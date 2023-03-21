@@ -99,9 +99,9 @@ export async function createSeries(series) {
 export default async function getWatchedMedias(userId, actorId) {
   try {
     const query = `MATCH (u:User {googleId: $userId})-[w:WATCHED|MEMBER_OF*1..2]->(m:Media)<-[act:ACTED_IN]-(a:Actor {id: $actorId})
-                  WITH m, act, LAST(w).date AS date
-                  ORDER BY date DESC
-                  RETURN COLLECT(m{.id, .name, .posterUrl, character: act.as}) AS result`;
+                   WITH m, act, LAST(w).date AS date
+                   ORDER BY date DESC
+                   RETURN COLLECT(m{.id, .name, .posterUrl, character: act.as}) AS result`;
     const result = await read(query, { userId, actorId });
     return result[0].result;
   } catch (e) {

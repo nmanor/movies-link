@@ -1,12 +1,13 @@
 .container {
     --pading-sides: 25px;
-    position: sticky;
+    position: fixed;
     top: var(--padding-sides-value);
+    left: var(--padding-sides-value);
+    right: var(--padding-sides-value);
     z-index: 5;
     display: flex;
     align-items: center;
     gap: 20px;
-    margin-bottom: 25px;
     padding: 15px var(--pading-sides);
     border-radius: 50px;
     border: rgba(255, 255, 255, 0.04) 2px solid;

@@ -1,3 +1,5 @@
+import MediaType from './enums';
+
 /**
  * Returns a random number in the specified range.
  * @param min {number} Lower bound of the random range
@@ -28,3 +30,10 @@ export const UID = () => Date.now().toString(36) + Math.random().toString(36).sl
  * @returns {string} Random salt string
  */
 export const salt = () => (Math.random() + 1).toString(36).substring(2);
+
+/**
+ * Get the type of the media based on it's ID
+ * @param mediaId {string} the ID of the media
+ * @returns {string} One of the options in `MediaType`
+ */
+export const getMediaType = (mediaId) => (mediaId.startsWith('m') ? MediaType.Movie : MediaType.Series);

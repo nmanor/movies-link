@@ -29,7 +29,7 @@ export default function NavigationBarComponent() {
       home: url.match(/^\/$/),
       profile: url.match(/^\/(profile|group)/),
       timeline: url.match(/^\/timeline/),
-      search: url.match(/^\/(search|movie|actor)/),
+      search: url.match(/^\/(search|media|actor)/),
     });
 
     router.events.on('routeChangeStart', handleStart);

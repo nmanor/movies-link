@@ -92,3 +92,15 @@ export async function removeMediaFromGroup(groupId, mediaId) {
     return false;
   }
 }
+
+export async function getUsersGroup(userId) {
+  try {
+    const query = `MATCH (:User {googleId: $userId})-[:MEMBER_OF]->(g:Group)
+                   RETURN COLLECT(g{.color, .name, .id}) AS groups`;
+    const result = await read(query, { userId });
+    return result[0].groups;
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+}
