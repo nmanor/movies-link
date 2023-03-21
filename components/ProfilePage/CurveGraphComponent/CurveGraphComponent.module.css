@@ -1,0 +1,11 @@
+.container {
+    width: fit-content;
+}
+
+.labels {
+    color: white;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    font-weight: bold;
+}

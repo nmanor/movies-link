@@ -1,4 +1,4 @@
-import { write } from './neo4jDriver';
+import { read, write } from './neo4jDriver';
 
 export default async function login(user) {
   try {
@@ -20,3 +20,25 @@ export default async function login(user) {
     return null;
   }
 }
+
+export async function getMediaPerMonth(userId) {
+  try {
+    const query = `MATCH (:User {googleId: $userId})-[w:WATCHED|MEMBER_OF*1..2]->(:Media)
+                   WHERE LAST(w).date >= timestamp() - 31536000000
+                   RETURN datetime({epochmillis: toInteger(LAST(w).date)}).month AS month, COUNT(w) AS media
+                   ORDER BY month`;
+    const result = await read(query, { userId });
+    return result
+      .reduce((prev, curr) => ({ ...prev, [Number(curr.month)]: Number(curr.media) }), {});
+  } catch (e) {
+    console.error(e);
+    return {};
+  }
+}
+
+/*
+MATCH (u:User {googleId: '118301174708090486372'})
+OPTIONAL MATCH (u)-[wm:WATCHED|MEMBER_OF*1..2]->(m:Movie)
+OPTIONAL MATCH (u)-[ws:WATCHED|MEMBER_OF*1..2]->(s:Series)
+RETURN COUNT(DISTINCT m) AS movies, COUNT(DISTINCT s) AS series, SUM(m.duration[1]) + SUM(m.duration[0]) * 60 AS moviesTime, SUM(s.numberOfSeasons) AS numberOfSeasons
+ */
