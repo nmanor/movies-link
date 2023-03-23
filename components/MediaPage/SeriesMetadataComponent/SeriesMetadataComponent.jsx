@@ -16,7 +16,7 @@ function SeriesMetadataComponent({
       </div>
       <div className={styles.metadataItem}>
         <CalendarSVGComponent className={styles.svgIcon} style={{ fill: accentColor }} />
-        <p>{`${firstAirDate}-${lastAirDate}`}</p>
+        <p>{`${firstAirDate}${lastAirDate !== firstAirDate ? `-${lastAirDate}` : ''}`}</p>
       </div>
       <div className={styles.metadataItem}>
         <HashSVGComponent className={styles.svgIcon} style={{ fill: accentColor }} />

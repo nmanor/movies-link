@@ -1,9 +1,11 @@
-// https://dribbble.com/shots/20702083-Social-Network-Mobile-App
-
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 import axios, { HttpStatusCode } from 'axios';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import { Parallax, ParallaxProvider } from 'react-scroll-parallax';
+import * as PropTypes from 'prop-types';
 import styles from '../styles/Profile.module.css';
 import PopupComponent from '../components/shared/PopupComponent/PopupComponent';
 import ColorPickerComponent from '../components/ProfilePage/ColorPickerComponent/ColorPickerComponent';
@@ -12,10 +14,21 @@ import getServerSidePropsLoginMiddleware from '../middlware/getServerSidePropsLo
 import redirectToPage from '../utils/redirectToPage';
 import CurveGraphComponent from '../components/ProfilePage/CurveGraphComponent/CurveGraphComponent';
 import extractBrightestColor, { colorLightening } from '../utils/colorExtractor';
+import StatisticsTableComponent from '../components/ProfilePage/StatisticsTableComponent/StatisticsTableComponent';
+import GroupsListComponent from '../components/ProfilePage/GroupsListComponent/GroupsListComponent';
 
 const colors = ['#ffadad', '#ffc6ff', '#bdb2ff', '#a0c4ff', '#9bf6ff', '#caffbf', '#fdffb6', '#ffd6a5', '#fafafa'];
 
-export default function Profile({ user: { image, firstName, lastName }, mediaPerMonth }) {
+export default function Profile({
+  user: {
+    image, firstName, lastName, email,
+  },
+  mediaPerMonth,
+  groups,
+  statistics: {
+    movies, series, moviesTime, numberOfSeasons,
+  },
+}) {
   const router = useRouter();
 
   const [isNewGroupPopupOpen, setIsNewGroupPopupOpen] = useState(false);
@@ -24,11 +37,25 @@ export default function Profile({ user: { image, firstName, lastName }, mediaPer
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [accentColor, setAccentColor] = useState('#FFF');
 
+  const graphRef = useRef(null);
+  const [graphSize, setGraphSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    if (graphRef.current) {
+      setGraphSize(({
+        width: graphRef.current.parentElement.offsetWidth,
+        height: graphRef.current.parentElement.offsetHeight,
+      }));
+    }
+  }, []);
+
   const updateAccentColor = async () => {
     const color = await extractBrightestColor(image);
     setAccentColor(color);
   };
-  useEffect(() => { updateAccentColor(); }, [image]);
+  useEffect(() => {
+    updateAccentColor();
+  }, [image]);
 
   const handleSnackbarHiding = useCallback(() => setShowSnackbar(false), []);
   const handleNewGroupClick = useCallback(() => setIsNewGroupPopupOpen(true), []);
@@ -81,34 +108,82 @@ export default function Profile({ user: { image, firstName, lastName }, mediaPer
         <ColorPickerComponent colors={colors} />
       </PopupComponent>
 
-      <div className={styles.container}>
-        <button type="button" onClick={handleNewGroupClick}>New Group - DO NOT CLICK THAT BUTTON</button>
-        <Image
-          className={styles.profileImage}
-          src={image}
-          alt={`Profile image of ${firstName}`}
-          width={150}
-          height={150}
+      <ParallaxProvider>
+        <meta name="theme-color" content={accentColor} />
+        <div
+          style={{ backgroundImage: `url(${image})` }}
+          className={styles.blurImage}
         />
-        <h1>{`${firstName} ${lastName}`}</h1>
+        <article className={styles.container}>
+          <Parallax speed={-4}>
+            <div className={styles.containerCorner} />
+            <Image
+              className={styles.profileImage}
+              src={image}
+              alt={`Profile image of ${firstName}`}
+              width={150}
+              height={150}
+            />
+            <div className={styles.header}>
+              <h1>{`${firstName} ${lastName}`}</h1>
+              <p>{email}</p>
+            </div>
+          </Parallax>
 
-        <CurveGraphComponent
-          width={300}
-          height={150}
-          data={mediaPerMonth}
-          accentColor={colorLightening(accentColor, 1.8)}
-        />
-      </div>
+          <div className={styles.content}>
+            <StatisticsTableComponent
+              movies={movies}
+              series={series}
+              moviesTime={moviesTime}
+              numberOfSeasons={numberOfSeasons}
+            />
+
+            <div className={styles.graphContainer}>
+              <div className={styles.graphTitle}>
+                <h1>Your watching trend</h1>
+                <p>Your monthly trend in the last year</p>
+              </div>
+              <CurveGraphComponent
+                ref={graphRef}
+                width={graphSize.width}
+                height={120}
+                data={mediaPerMonth}
+                accentColor={colorLightening(accentColor, 1.8)}
+              />
+            </div>
+
+            <h1 className={styles.title}>Your groups</h1>
+            <GroupsListComponent
+              onNewGroupClick={handleNewGroupClick}
+              groups={groups}
+            />
+          </div>
+        </article>
+      </ParallaxProvider>
+
     </>
   );
 }
+
+Profile.propTypes = {
+  user: PropTypes.instanceOf(Object).isRequired,
+  mediaPerMonth: PropTypes.instanceOf(Object).isRequired,
+  statistics: PropTypes.instanceOf(Object).isRequired,
+  groups: PropTypes.arrayOf(Object),
+};
+
+Profile.defaultProps = {
+  groups: [],
+};
 
 export const getServerSideProps = getServerSidePropsLoginMiddleware(async (context) => {
   try {
     const { user } = context.req.session;
 
-    const [moviesPerMonthResponse] = await Promise.all([
+    const [moviesPerMonthResponse, statisticsResponse, groupsResponse] = await Promise.all([
       axios.post(`${process.env.BASE_URL}/api/profile/media-per-month`, { user: user.googleId }),
+      axios.post(`${process.env.BASE_URL}/api/profile/user-statistics`, { user: user.googleId }),
+      axios.post(`${process.env.BASE_URL}/api/groups/users-group`, { user: user.googleId }),
     ]);
 
     let mediaPerMonth = {};
@@ -116,7 +191,21 @@ export const getServerSideProps = getServerSidePropsLoginMiddleware(async (conte
       mediaPerMonth = moviesPerMonthResponse.data;
     }
 
-    return { props: { user, mediaPerMonth } };
+    let statistics = {};
+    if (statisticsResponse.status === HttpStatusCode.Ok) {
+      statistics = statisticsResponse.data;
+    }
+
+    let groups = [];
+    if (groupsResponse.status === HttpStatusCode.Ok) {
+      groups = groupsResponse.data;
+    }
+
+    return {
+      props: {
+        user, mediaPerMonth, statistics, groups,
+      },
+    };
   } catch (e) {
     return redirectToPage('/404');
   }

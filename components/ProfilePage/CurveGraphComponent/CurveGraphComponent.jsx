@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import { PropTypes } from 'prop-types';
 import styles from './CurveGraphComponent.module.css';
 import { rgbColorToTransparent } from '../../../utils/colorExtractor';
 
-export default function CurveGraphComponent({
+const CurveGraphComponent = forwardRef(({
   data, width, height, lineWidth, accentColor,
-}) {
+}, ref) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -80,14 +80,19 @@ export default function CurveGraphComponent({
   };
 
   return (
-    <div className={styles.container}>
-      <canvas ref={canvasRef} width={width} height={height} />
+    <div className={styles.container} ref={ref}>
       <div className={styles.labels} style={{ color: accentColor }}>
         {renderMonthLabels()}
       </div>
+      <canvas
+        ref={canvasRef}
+        width={width}
+        height={height}
+        className={styles.canvas}
+      />
     </div>
   );
-}
+});
 
 CurveGraphComponent.propTypes = {
   data: PropTypes.instanceOf(Object),
@@ -102,3 +107,5 @@ CurveGraphComponent.defaultProps = {
   lineWidth: 2,
   accentColor: '#FFF',
 };
+
+export default CurveGraphComponent;

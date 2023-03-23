@@ -36,9 +36,20 @@ export async function getMediaPerMonth(userId) {
   }
 }
 
-/*
-MATCH (u:User {googleId: '118301174708090486372'})
-OPTIONAL MATCH (u)-[wm:WATCHED|MEMBER_OF*1..2]->(m:Movie)
-OPTIONAL MATCH (u)-[ws:WATCHED|MEMBER_OF*1..2]->(s:Series)
-RETURN COUNT(DISTINCT m) AS movies, COUNT(DISTINCT s) AS series, SUM(m.duration[1]) + SUM(m.duration[0]) * 60 AS moviesTime, SUM(s.numberOfSeasons) AS numberOfSeasons
- */
+export async function getUserStatistics(userId) {
+  try {
+    const query = `MATCH (u:User {googleId: $userId})
+                   OPTIONAL MATCH (u)-[wm:WATCHED|MEMBER_OF*1..2]->(m:Movie)
+                   WITH u, COUNT(DISTINCT m) AS movies, SUM(m.duration[0]) * 60 + SUM(m.duration[1]) AS moviesTime
+                   OPTIONAL MATCH (u)-[ws:WATCHED|MEMBER_OF*1..2]->(s:Series)
+                   WITH movies, moviesTime, COUNT(DISTINCT s) AS series, SUM(s.numberOfSeasons) AS numberOfSeasons
+                   RETURN *`;
+    const result = await read(query, { userId });
+    return result[0];
+  } catch (e) {
+    console.error(e);
+    return {
+      movies: 0, series: 0, moviesTime: 0, numberOfSeasons: 0,
+    };
+  }
+}

@@ -1,0 +1,18 @@
+.statisticsTable {
+    display: grid;
+    grid-template: repeat(2, 1fr) / repeat(2, 1fr);
+    color: white;
+    justify-content: center;
+    text-align: center;
+    gap: 25px 15px;
+    width: 70%;
+    margin: 20px auto;
+}
+
+.statisticsTable h3 {
+    font-size: 1.8em;
+}
+
+.statisticsTable p {
+    opacity: 0.7;
+}
