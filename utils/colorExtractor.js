@@ -64,6 +64,10 @@ export function colorLightening(hex, rgbFactor = 1) {
   return `rgb(${r},${g},${b})`;
 }
 
+export const rgbColorToTransparent = (rgb, opacity) => rgb
+  .replace(/rgb\(/, 'rgba(')
+  .replace(/\)/, `,${opacity})`);
+
 const sumArray = (arr) => arr.reduce((a, b) => a + b);
 
 export default async function extractBrightestColor(imageUrl) {
