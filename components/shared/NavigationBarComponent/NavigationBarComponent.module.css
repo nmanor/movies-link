@@ -2,22 +2,25 @@
     display: flex;
     justify-content: space-between;
     position: fixed;
-    bottom: 0;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
     cursor: pointer;
     user-select: none;
-    width: 100%;
-    padding: 15px 60px;
+    padding: 20px 15px;
     z-index: var(--navigation-z-index);
-    background: var(--background-color-transparent);
+    border: rgba(255, 255, 255, 0.04) 2px solid;
+    background: rgba(0, 0, 0, 0.75) linear-gradient(105deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.15) 65%, rgba(255, 255, 255, 0.11) 100%);
     backdrop-filter: blur(15px);
+    box-shadow: rgba(0, 0, 0, 0.25) 0 54px 55px, rgba(0, 0, 0, 0.12) 0 -12px 30px, rgba(0, 0, 0, 0.12) 0 4px 6px, rgba(0, 0, 0, 0.17) 0 12px 13px, rgba(0, 0, 0, 0.09) 0 -3px 5px;
+    border-radius: 40px;
 }
 
-.container input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
+.container a {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .checkmark {
@@ -27,11 +30,19 @@
 }
 
 .circle {
+    --size: 50px;
     border-radius: 50%;
-    width: 6px;
-    height: 6px;
+    left: 0;
+    right: 0;
+    bottom: calc(-1 * var(--size) / 2 - 20px);
+    width: var(--size);
+    height: var(--size);
     background-color: white;
-    margin: 5px auto 0 auto;
+    margin: 0 auto;
+    position: absolute;
+    filter: blur(20px);
+    opacity: 0.4;
+    clip-path: polygon(0 -250%, 250% -150%, 250% 50%, -250% 50%);
 }
 
 .invisible {
