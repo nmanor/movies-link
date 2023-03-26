@@ -1,9 +1,12 @@
 import React from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
+import Image from 'next/image';
 import styles from '../styles/Home.module.css';
 import getServerSidePropsLoginMiddleware from '../middlware/getServerSidePropsLoginMiddleware';
 import redirectToPage from '../utils/redirectToPage';
 import { greetByTime } from '../utils/dates';
+import BlankSearchSVGComponent from '@/components/shared/svg/Search/BlankSearchSVGComponent';
 
 export default function Home({ user }) {
   return (
@@ -15,7 +18,24 @@ export default function Home({ user }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <h1>{greetByTime(user.firstName)}</h1>
+        <Image
+          className={styles.tvImage}
+          width={150}
+          height={150}
+          src="/images/tv.png"
+          alt="Illustration of TV and popcorn"
+        />
+        <h1 className={styles.greeting}>{greetByTime(user.firstName)}</h1>
+        <Link className={styles.searchShortcut} href="/search">
+          <BlankSearchSVGComponent />
+          <p>
+            Looking for a movie or TV show?
+            <br />
+            <span>
+              Try the search here
+            </span>
+          </p>
+        </Link>
       </main>
     </>
   );
