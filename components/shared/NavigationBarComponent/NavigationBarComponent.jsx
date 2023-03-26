@@ -33,6 +33,7 @@ export default function NavigationBarComponent() {
     });
 
     router.events.on('routeChangeStart', handleStart);
+    handleStart(router.asPath);
 
     return () => router.events.off('routeChangeStart', handleStart);
   }, []);
