@@ -16,16 +16,16 @@ export default function tmdbDateToJsDate(date) {
 export function greetByTime(userName = null) {
   const currentTime = new Date();
   const currentHour = currentTime.getHours();
-  const name = userName ? `, ${userName}!` : '!';
+  const postfix = userName ? `, ${userName}!` : '!';
 
   if (currentHour < 5) {
-    return `Good night${name}`;
+    return `Good night${postfix}`;
   } if (currentHour < 12) {
-    return `Good morning${name}`;
+    return `Good morning${postfix}`;
   } if (currentHour < 18) {
-    return `Good afternoon${name}`;
+    return `Good afternoon${postfix}`;
   } if (currentHour < 22) {
-    return `Good evening${name}`;
+    return `Good evening${postfix}`;
   }
-  return `Good night${name}`;
+  return `Good night${postfix}`;
 }

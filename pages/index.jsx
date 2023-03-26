@@ -2,13 +2,14 @@ import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import axios, { HttpStatusCode } from 'axios';
 import styles from '../styles/Home.module.css';
 import getServerSidePropsLoginMiddleware from '../middlware/getServerSidePropsLoginMiddleware';
 import redirectToPage from '../utils/redirectToPage';
 import { greetByTime } from '../utils/dates';
-import BlankSearchSVGComponent from '@/components/shared/svg/Search/BlankSearchSVGComponent';
+import BlankSearchSVGComponent from '../components/shared/svg/Search/BlankSearchSVGComponent';
 
-export default function Home({ user }) {
+export default function Home({ user, trending }) {
   return (
     <>
       <Head>
@@ -36,6 +37,22 @@ export default function Home({ user }) {
             </span>
           </p>
         </Link>
+
+        <h2 className={styles.trendingTitle}>Trending movies & TV shows</h2>
+        <div className={styles.trending}>
+          {trending.map(({ id, path, title }, i) => (
+            <Link key={id} href={`/media/${id}`} className={styles.mediaCard}>
+              <Image
+                src={path}
+                alt={`Poster of ${title}`}
+                width={0}
+                height={0}
+                priority={i < 3}
+              />
+              <h3>{title}</h3>
+            </Link>
+          ))}
+        </div>
       </main>
     </>
   );
@@ -44,8 +61,17 @@ export default function Home({ user }) {
 export const getServerSideProps = getServerSidePropsLoginMiddleware(async (context) => {
   try {
     const { user } = context.req.session;
-    return { props: { user } };
+
+    const trendingResponse = await axios.get(`${process.env.BASE_URL}/api/media/trending-movies`);
+
+    let trending = {};
+    if (trendingResponse.status === HttpStatusCode.Ok) {
+      trending = trendingResponse.data;
+    }
+
+    return { props: { user, trending } };
   } catch (e) {
+    console.error(e);
     return redirectToPage('/404');
   }
 });

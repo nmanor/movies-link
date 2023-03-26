@@ -1,8 +1,10 @@
 .main {
     padding: var(--padding-sides-value);
     color: white;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template: repeat(4, auto) 1fr / 1fr;
+    margin-bottom: var(--padding-bottom);
+    height: calc(100vh - var(--padding-bottom));
 }
 
 .tvImage {
@@ -31,4 +33,59 @@
 
 .searchShortcut span {
     text-decoration: underline !important;
+}
+
+.trendingTitle {
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.trending {
+    display: flex;
+    gap: 25px;
+    width: calc(100% + 2 * var(--padding-sides-value));
+    margin: 0 calc(-1 * var(--padding-sides-value));
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+}
+
+.trending::-webkit-scrollbar {
+    display: none;
+}
+
+.mediaCard {
+    --card-width: 60vw;
+    scroll-snap-align: center;
+    height: 100%;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    color: white;
+    text-decoration: none;
+    width: var(--card-width);
+}
+
+.mediaCard:first-child {
+    margin-left: var(--padding-sides-value);
+}
+
+.mediaCard:last-child {
+    margin-right: var(--padding-sides-value);
+}
+
+.mediaCard img {
+    width: var(--card-width);
+    flex-grow: 1;
+    object-fit: cover;
+    border-radius: 25px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    border: rgba(255, 255, 255, 0.07) 2px solid;
+}
+
+.mediaCard h3 {
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: normal;
 }
