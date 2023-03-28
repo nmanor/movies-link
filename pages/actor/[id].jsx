@@ -16,6 +16,7 @@ import { MoviesListComponent } from '../../components/shared/ItemsListComponent/
 function Actor({
   name,
   birthday,
+  deathday,
   placeOfBirth,
   gender,
   profileUrl,
@@ -49,6 +50,7 @@ function Actor({
             <h1>{name}</h1>
             <ActorMetadataComponent
               birthday={birthday}
+              deathday={deathday}
               gender={gender}
               placeOfBirth={placeOfBirth}
               accentColor={accentColor}
@@ -120,6 +122,7 @@ function Actor({
 Actor.propTypes = {
   name: PropTypes.string,
   birthday: PropTypes.string,
+  deathday: PropTypes.string,
   placeOfBirth: PropTypes.string,
   gender: PropTypes.string,
   profileUrl: PropTypes.string,
@@ -132,6 +135,7 @@ Actor.propTypes = {
 Actor.defaultProps = {
   name: 'John Doe',
   birthday: '1900-05-12',
+  deathday: '1900-05-12',
   placeOfBirth: 'Nowhere',
   gender: 'Other',
   profileUrl: '',
