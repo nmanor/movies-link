@@ -64,6 +64,48 @@ async function storeSeriesInDB(mediaId, data) {
   return createSeries(media);
 }
 
+async function handleMovie(mediaId, userId) {
+  let result = await findMovie(mediaId, userId);
+  if (!result) {
+    promises.push(saveMovieActors(mediaId));
+    result = await storeMovieInDB(mediaId);
+    result.watchedByUser = { date: null };
+    result.watchedByGroups = [];
+  } else if (result.numberOfActors === 0) {
+    promises.push(saveMovieActors(mediaId));
+  }
+  return result;
+}
+
+async function handleSeries(mediaId, userId) {
+  let tmdbMedia;
+  let result;
+  [result, tmdbMedia] = await Promise.all([
+    findSeries(mediaId, userId),
+    axios.get(`https://api.themoviedb.org/3/tv/${mediaId.slice(1)}?api_key=${process.env.TMDB_KEY}`),
+  ]);
+
+  tmdbMedia = tmdbMedia.data;
+
+  promises.push(updateSeriesActors(result, tmdbMedia, mediaId));
+
+  if (!result) {
+    result = await storeSeriesInDB(mediaId, tmdbMedia);
+    result.watchedByUser = { date: null };
+    result.watchedByGroups = [];
+  } else if (result.numberOfSeasons !== tmdbMedia.number_of_seasons) {
+    promises.push(updateNumberOfSeasons(mediaId, tmdbMedia.number_of_seasons));
+    result.numberOfSeasons = tmdbMedia.number_of_seasons;
+  }
+
+  result.posterUrl = tmdbMedia.poster_path;
+  result.firstAirDate = tmdbDateToJsDate(tmdbMedia.first_air_date).getFullYear();
+  result.lastAirDate = tmdbMedia.status.toLowerCase() === 'ended'
+    ? tmdbDateToJsDate(tmdbMedia.last_air_date).getFullYear()
+    : 'present';
+  return result;
+}
+
 async function handler(req, res) {
   try {
     const { user: userId } = req.body;
@@ -81,38 +123,9 @@ async function handler(req, res) {
     promises = [];
     let media;
     if (mediaType === MediaType.Movie) {
-      media = await findMovie(mediaId, userId);
-      if (!media) {
-        promises.push(saveMovieActors(mediaId));
-        media = await storeMovieInDB(mediaId);
-        media.watchedByUser = { date: null };
-        media.watchedByGroups = [];
-      }
+      media = await handleMovie(mediaId, userId);
     } else {
-      let tmdbMedia;
-      [media, tmdbMedia] = await Promise.all([
-        findSeries(mediaId, userId),
-        axios.get(`https://api.themoviedb.org/3/tv/${mediaId.slice(1)}?api_key=${process.env.TMDB_KEY}`),
-      ]);
-
-      tmdbMedia = tmdbMedia.data;
-
-      promises.push(updateSeriesActors(media, tmdbMedia, mediaId));
-
-      if (!media) {
-        media = await storeSeriesInDB(mediaId, tmdbMedia);
-        media.watchedByUser = { date: null };
-        media.watchedByGroups = [];
-      } else if (media.numberOfSeasons !== tmdbMedia.number_of_seasons) {
-        promises.push(updateNumberOfSeasons(mediaId, tmdbMedia.number_of_seasons));
-        media.numberOfSeasons = tmdbMedia.number_of_seasons;
-      }
-
-      media.posterUrl = tmdbMedia.poster_path;
-      media.firstAirDate = tmdbDateToJsDate(tmdbMedia.first_air_date).getFullYear();
-      media.lastAirDate = tmdbMedia.status.toLowerCase() === 'ended'
-        ? tmdbDateToJsDate(tmdbMedia.last_air_date).getFullYear()
-        : 'present';
+      media = await handleSeries(mediaId, userId);
     }
 
     // wait for all the async functions to finish

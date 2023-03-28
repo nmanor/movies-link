@@ -5,6 +5,7 @@ export async function findMovie(movieId, userId) {
     const query = `MATCH (m:Movie {id: $movieId}), (u:User {googleId: $userId})
                    OPTIONAL MATCH (u)-[w:WATCHED]->(m)
                    OPTIONAL MATCH (u)-[:MEMBER_OF]->(g:Group)-[gw:WATCHED]->(m)
+                   OPTIONAL MATCH (a:Actor)-[:ACTED_IN]->(m)
                    RETURN m.id AS id, 
                           m.posterUrl AS posterUrl, 
                           m.name AS name, 
@@ -12,7 +13,8 @@ export async function findMovie(movieId, userId) {
                           m.duration AS duration,
                           m.mediaType AS mediaType,
                           {date: w.date} AS watchedByUser,
-                          COLLECT(g{.name, .id, .color, date: gw.date}) AS watchedByGroups`;
+                          COLLECT(g{.name, .id, .color, date: gw.date}) AS watchedByGroups,
+                          COUNT(a) AS numberOfActors`;
     const result = await read(query, { movieId, userId });
     return result[0];
   } catch (e) {
@@ -25,13 +27,15 @@ export async function findSeries(seriesId, userId) {
     const query = `MATCH (s:Series {id: $seriesId}), (u:User {googleId: $userId})
                    OPTIONAL MATCH (u)-[w:WATCHED]->(s)
                    OPTIONAL MATCH (u)-[:MEMBER_OF]->(g:Group)-[gw:WATCHED]->(s)
+                   OPTIONAL MATCH (a:Actor)-[:ACTED_IN]->(s)
                    RETURN s.id AS id, 
                           s.posterUrl AS posterUrl, 
                           s.name AS name, 
                           s.numberOfSeasons AS numberOfSeasons,
                           s.mediaType AS mediaType,
                           {date: w.date} AS watchedByUser,
-                          COLLECT(g{.name, .id, .color, date: gw.date}) AS watchedByGroups`;
+                          COLLECT(g{.name, .id, .color, date: gw.date}) AS watchedByGroups,
+                          COUNT(a) AS numberOfActors`;
     const result = await read(query, { seriesId, userId });
     return result[0];
   } catch (e) {
