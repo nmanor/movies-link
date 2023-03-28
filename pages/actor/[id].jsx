@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { PropTypes } from 'prop-types';
 import axios from 'axios';
 import { ParallaxBanner, ParallaxProvider } from 'react-scroll-parallax';
@@ -12,8 +12,10 @@ import styles from '../../styles/Actor.module.css';
 import getServerSidePropsLoginMiddleware from '../../middlware/getServerSidePropsLoginMiddleware';
 import redirectToPage from '../../utils/redirectToPage';
 import { MoviesListComponent } from '../../components/shared/ItemsListComponent/ItemsListComponent';
+import SnackbarComponent from '../../components/shared/SnackbarComponent/SnackbarComponent';
 
 function Actor({
+  id,
   name,
   birthday,
   deathday,
@@ -26,16 +28,40 @@ function Actor({
   watchedMovies,
 }) {
   const [accentColor, setAccentColor] = useState('#FFF');
+  const [allMedia, setAllMedia] = useState([]);
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const handleSnackbarHiding = useCallback(() => setShowSnackbar(false), []);
 
   const updateAccentColor = async () => {
     const color = await extractBrightestColor(profileUrl);
     setAccentColor(color);
   };
-  useEffect(() => { updateAccentColor(); }, [profileUrl]);
+  useEffect(() => {
+    updateAccentColor();
+  }, [profileUrl]);
+
+  const handleLoadAllMediaClick = useCallback(async () => {
+    try {
+      const response = await axios.post('/api/actors/all-media', { actorId: id });
+      const media = response.data.media
+        .filter((m1) => !watchedMovies.find((m2) => m2.id === m1.id));
+      setAllMedia(media);
+    } catch (e) {
+      console.error(e);
+      setShowSnackbar(true);
+    }
+  }, []);
 
   return (
     <>
       <title>{name}</title>
+
+      <SnackbarComponent
+        show={showSnackbar}
+        message="Error fetching the media"
+        accentColor={accentColor}
+        onHiding={handleSnackbarHiding}
+      />
 
       <ParallaxProvider>
         <meta name="theme-color" content={accentColor} />
@@ -57,38 +83,38 @@ function Actor({
             />
             <div className={styles.socialButtons}>
               {facebook
-                && (
-                <a
-                  href={facebook}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ backgroundColor: accentColor }}
-                >
-                  <FacebookSVGComponent className={styles.svgIcon} />
-                </a>
-                )}
+                                && (
+                                <a
+                                  href={facebook}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  style={{ backgroundColor: accentColor }}
+                                >
+                                  <FacebookSVGComponent className={styles.svgIcon} />
+                                </a>
+                                )}
               {instagram
-                && (
-                <a
-                  href={instagram}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ backgroundColor: accentColor }}
-                >
-                  <InstagramSVGComponent className={styles.svgIcon} />
-                </a>
-                )}
+                                && (
+                                <a
+                                  href={instagram}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  style={{ backgroundColor: accentColor }}
+                                >
+                                  <InstagramSVGComponent className={styles.svgIcon} />
+                                </a>
+                                )}
               {twitter
-                && (
-                <a
-                  href={twitter}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ backgroundColor: accentColor }}
-                >
-                  <TwitterSVGComponent className={styles.svgIcon} />
-                </a>
-                )}
+                                && (
+                                <a
+                                  href={twitter}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  style={{ backgroundColor: accentColor }}
+                                >
+                                  <TwitterSVGComponent className={styles.svgIcon} />
+                                </a>
+                                )}
             </div>
           </div>
 
@@ -113,6 +139,32 @@ function Actor({
                 />
               )}
           </div>
+
+          <div className={styles.playersSection}>
+            {allMedia.length > 0
+              ? (
+                <MoviesListComponent
+                  title="Other media"
+                  items={allMedia}
+                  accentColor={accentColor}
+                />
+              )
+              : (
+                <div className={styles.loadMoreMedia}>
+                  Want to see more?
+                  <button
+                    type="button"
+                    style={{ color: accentColor }}
+                    onClick={handleLoadAllMediaClick}
+                  >
+                    see the rest of
+                    {' '}
+                    {name.split(' ')[0]}
+                    &apos;s media
+                  </button>
+                </div>
+              )}
+          </div>
         </article>
       </ParallaxProvider>
     </>
@@ -120,6 +172,7 @@ function Actor({
 }
 
 Actor.propTypes = {
+  id: PropTypes.string.isRequired,
   name: PropTypes.string,
   birthday: PropTypes.string,
   deathday: PropTypes.string,
