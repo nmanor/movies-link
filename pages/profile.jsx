@@ -16,6 +16,7 @@ import CurveGraphComponent from '../components/ProfilePage/CurveGraphComponent/C
 import extractBrightestColor, { colorLightening } from '../utils/colorExtractor';
 import StatisticsTableComponent from '../components/ProfilePage/StatisticsTableComponent/StatisticsTableComponent';
 import GroupsListComponent from '../components/ProfilePage/GroupsListComponent/GroupsListComponent';
+import ButtonComponent from '../components/shared/ButtonComponent/ButtonComponent';
 
 const colors = ['#ffadad', '#ffc6ff', '#bdb2ff', '#a0c4ff', '#9bf6ff', '#caffbf', '#fdffb6', '#ffd6a5', '#fafafa'];
 
@@ -40,6 +41,11 @@ export default function Profile({
   const graphRef = useRef(null);
   const [graphSize, setGraphSize] = useState({ width: 0, height: 0 });
 
+  const openSnackbar = (message) => {
+    setSnackbarMessage(message);
+    setShowSnackbar(true);
+  };
+
   useEffect(() => {
     if (graphRef.current) {
       setGraphSize(({
@@ -51,7 +57,7 @@ export default function Profile({
 
   const updateAccentColor = async () => {
     const color = await extractBrightestColor(image);
-    setAccentColor(color);
+    setAccentColor(colorLightening(color, 1.8));
   };
   useEffect(() => {
     updateAccentColor();
@@ -66,22 +72,32 @@ export default function Profile({
     if (Array.isArray(values) && values.length === 2) {
       const [name, color] = values;
       if (name.length < 3) {
-        setSnackbarMessage('The name must be at least 3 letters');
-        setShowSnackbar(true);
+        openSnackbar('The name must be at least 3 letters');
       } else {
         setIsCreatingGroup(true);
         try {
           const { data: { id } } = await axios.post('/api/groups/create', { name: name.trim(), color });
           if (id) await router.push(`/group/${id}`);
         } catch (e) {
-          setSnackbarMessage('An error occurred');
-          setShowSnackbar(true);
+          openSnackbar('An error occurred');
         }
         setIsCreatingGroup(false);
       }
     } else {
-      setSnackbarMessage('Please choose name and color');
-      setShowSnackbar(true);
+      openSnackbar('Please choose name and color');
+    }
+  }, []);
+
+  const handleQuickStartClick = useCallback(() => router.push('/initial-recommendation'), []);
+  const handleLogoutClick = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/auth/logout');
+      if (response.status === HttpStatusCode.Ok && response.data.success) {
+        await router.push('/login');
+      }
+    } catch (e) {
+      console.log(e);
+      openSnackbar('Error while logging out');
     }
   }, []);
 
@@ -127,6 +143,23 @@ export default function Profile({
             <div className={styles.header}>
               <h1>{`${firstName} ${lastName}`}</h1>
               <p>{email}</p>
+              <div className={styles.actionButtons}>
+                <ButtonComponent
+                  className={styles.actionButton}
+                  accentColor={accentColor}
+                  onClick={handleLogoutClick}
+                >
+                  Log out
+                </ButtonComponent>
+                <ButtonComponent
+                  className={styles.actionButton}
+                  accentColor={accentColor}
+                  onClick={handleQuickStartClick}
+                  outline
+                >
+                  Quick start
+                </ButtonComponent>
+              </div>
             </div>
           </Parallax>
 
@@ -148,7 +181,7 @@ export default function Profile({
                 width={graphSize.width}
                 height={120}
                 data={mediaPerMonth}
-                accentColor={colorLightening(accentColor, 1.8)}
+                accentColor={accentColor}
               />
             </div>
 

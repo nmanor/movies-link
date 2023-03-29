@@ -6,16 +6,22 @@ import GlobeSVGComponent from '../../shared/svg/GlobeSVGComponent';
 import GenderSVGComponent from '../../shared/svg/GenderSVGComponent';
 import tmdbDateToJsDate from '../../../utils/dates';
 
-function dateToAge(date) {
-  if (!date) return 'Unknown';
+function dateToAge(date1, date2) {
+  if (!date1) return 'Unknown age';
 
-  const birthday = tmdbDateToJsDate(date);
+  const birthday = tmdbDateToJsDate(date1);
   const ageDate = new Date(Date.now() - birthday);
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
+
+  if (date2) {
+    const deathday = tmdbDateToJsDate(date2);
+    return `${birthday.getFullYear()}-${deathday.getFullYear()}`;
+  }
+
+  return `${Math.abs(ageDate.getUTCFullYear() - 1970)} y/o`;
 }
 
 function ActorMetadataComponent({
-  birthday, gender, placeOfBirth, accentColor,
+  birthday, deathday, gender, placeOfBirth, accentColor,
 }) {
   return (
     <div className={styles.metadataContainer}>
@@ -25,7 +31,7 @@ function ActorMetadataComponent({
       </div>
       <div className={styles.metadataItem}>
         <CalendarSVGComponent className={styles.svgIcon} style={{ fill: accentColor }} />
-        <p>{`${dateToAge(birthday)} y/o`}</p>
+        <p>{dateToAge(birthday, deathday)}</p>
       </div>
       <div className={styles.metadataItem}>
         <GlobeSVGComponent className={styles.svgIcon} style={{ fill: accentColor }} />
@@ -39,6 +45,7 @@ function ActorMetadataComponent({
 
 ActorMetadataComponent.propTypes = {
   birthday: PropTypes.string,
+  deathday: PropTypes.string,
   gender: PropTypes.string,
   placeOfBirth: PropTypes.string,
   accentColor: PropTypes.string,
@@ -46,6 +53,7 @@ ActorMetadataComponent.propTypes = {
 
 ActorMetadataComponent.defaultProps = {
   birthday: 'unknown',
+  deathday: 'unknown',
   gender: 'unknown',
   placeOfBirth: 'unknown',
   accentColor: 'rgba(0, 0, 0, 1)',

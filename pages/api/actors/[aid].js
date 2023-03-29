@@ -24,7 +24,7 @@ export default async function handler(req, res) {
       axios.get(`https://api.themoviedb.org/3/person/${actorId}/external_ids?api_key=${process.env.TMDB_KEY}&language=en-US`)];
     const [{
       data: {
-        name, birthday, place_of_birth: placeOfBirth, gender, profile_path: profileUrl,
+        name, birthday, deathday, place_of_birth: placeOfBirth, gender, profile_path: profileUrl,
       },
     },
     {
@@ -38,6 +38,7 @@ export default async function handler(req, res) {
       id: actorId,
       name,
       birthday,
+      deathday,
       placeOfBirth: placeOfBirth.split(',').pop().trim(),
       gender: genderIdToString(gender),
       profileUrl: `https://image.tmdb.org/t/p/w780${profileUrl}`,

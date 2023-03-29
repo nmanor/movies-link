@@ -1,10 +1,18 @@
+import axios from 'axios';
 import { read, write } from './neo4jDriver';
+import { fetchMovieCast, fetchSeriesCast, processCast } from '../utils/actors';
+import { addActorsToMedia } from './actors';
+import tmdbDateToJsDate from '../utils/dates';
+
+const HOUR = 60;
+const MAX_ACTORS = 20;
 
 export async function findMovie(movieId, userId) {
   try {
     const query = `MATCH (m:Movie {id: $movieId}), (u:User {googleId: $userId})
                    OPTIONAL MATCH (u)-[w:WATCHED]->(m)
                    OPTIONAL MATCH (u)-[:MEMBER_OF]->(g:Group)-[gw:WATCHED]->(m)
+                   OPTIONAL MATCH (a:Actor)-[:ACTED_IN]->(m)
                    RETURN m.id AS id, 
                           m.posterUrl AS posterUrl, 
                           m.name AS name, 
@@ -12,7 +20,8 @@ export async function findMovie(movieId, userId) {
                           m.duration AS duration,
                           m.mediaType AS mediaType,
                           {date: w.date} AS watchedByUser,
-                          COLLECT(g{.name, .id, .color, date: gw.date}) AS watchedByGroups`;
+                          COLLECT(g{.name, .id, .color, date: gw.date}) AS watchedByGroups,
+                          COUNT(a) AS numberOfActors`;
     const result = await read(query, { movieId, userId });
     return result[0];
   } catch (e) {
@@ -25,13 +34,15 @@ export async function findSeries(seriesId, userId) {
     const query = `MATCH (s:Series {id: $seriesId}), (u:User {googleId: $userId})
                    OPTIONAL MATCH (u)-[w:WATCHED]->(s)
                    OPTIONAL MATCH (u)-[:MEMBER_OF]->(g:Group)-[gw:WATCHED]->(s)
+                   OPTIONAL MATCH (a:Actor)-[:ACTED_IN]->(s)
                    RETURN s.id AS id, 
                           s.posterUrl AS posterUrl, 
                           s.name AS name, 
                           s.numberOfSeasons AS numberOfSeasons,
                           s.mediaType AS mediaType,
                           {date: w.date} AS watchedByUser,
-                          COLLECT(g{.name, .id, .color, date: gw.date}) AS watchedByGroups`;
+                          COLLECT(g{.name, .id, .color, date: gw.date}) AS watchedByGroups,
+                          COUNT(a) AS numberOfActors`;
     const result = await read(query, { seriesId, userId });
     return result[0];
   } catch (e) {
@@ -101,7 +112,7 @@ export default async function getWatchedMedias(userId, actorId) {
     const query = `MATCH (u:User {googleId: $userId})-[w:WATCHED|MEMBER_OF*1..2]->(m:Media)<-[act:ACTED_IN]-(a:Actor {id: $actorId})
                    WITH m, act, LAST(w).date AS date
                    ORDER BY date DESC
-                   RETURN COLLECT(m{.id, .name, .posterUrl, character: act.as}) AS result`;
+                   RETURN COLLECT(DISTINCT m{.id, .name, .posterUrl, character: act.as}) AS result`;
     const result = await read(query, { userId, actorId });
     return result[0].result;
   } catch (e) {
@@ -134,4 +145,138 @@ export async function updateNumberOfSeasons(seriesId, numberOfSeasons) {
     console.error(e);
     return false;
   }
+}
+
+export async function getAllUserMediaIds(userId) {
+  try {
+    const query = `MATCH (:User {googleId: $userId})-[:WATCHED|MEMBER_OF*1..2]-(m:Media)
+                   RETURN COLLECT(m.id) AS ids`;
+    return (await read(query, { userId }))[0].ids;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+}
+
+async function saveMovieActors(mediaId) {
+  const cast = await fetchMovieCast(mediaId);
+  await addActorsToMedia(mediaId, processCast(cast, MAX_ACTORS));
+}
+
+async function updateSeriesActors(series, tmdbSeries, seriesId) {
+  const prevNumberOfSeasons = series ? series.numberOfSeasons || 0 : 0;
+  const newNumberOfSeasons = tmdbSeries.number_of_seasons;
+
+  if (prevNumberOfSeasons === newNumberOfSeasons) return;
+  const actors = await fetchSeriesCast(prevNumberOfSeasons, newNumberOfSeasons, seriesId);
+  if (actors) await addActorsToMedia(seriesId, processCast(actors, MAX_ACTORS));
+}
+
+async function storeMovieInDB(mediaId) {
+  const response = await axios.get(`https://api.themoviedb.org/3/movie/${mediaId.slice(1)}?api_key=${process.env.TMDB_KEY}`);
+
+  const {
+    data: {
+      poster_path: posterUrl,
+      title: name,
+      release_date: releaseDate,
+      runtime,
+    },
+  } = response;
+
+  const media = {
+    movieId: mediaId,
+    posterUrl,
+    name,
+    distributionYear: tmdbDateToJsDate(releaseDate).getFullYear(),
+    duration: [Math.floor(runtime / HOUR), runtime % HOUR],
+  };
+
+  return createMovie(media);
+}
+
+async function storeSeriesInDB(mediaId, data) {
+  const { poster_path: posterUrl, name, number_of_seasons: numberOfSeasons } = data;
+
+  const media = {
+    seriesId: mediaId,
+    posterUrl,
+    numberOfSeasons,
+    name,
+  };
+
+  return createSeries(media);
+}
+
+/**
+ * A function that handles the movie, brings all the necessary information about it and adds it
+ * to the DB if it does not exist.
+ * @param mediaId {string} The ID of the media with `m` prefix (e.g. `m123`)
+ * @param userId {string} The ID of the user
+ * @returns {Promise<{media: Object, promises: Promise<Awaited<unknown>[]>}>} An object that
+ * represents the movie for the user, and a Promise that waits for the end of several actions
+ * that are running at the same time
+ */
+export async function handleMovie(mediaId, userId) {
+  if (!mediaId.startsWith('m')) {
+    throw new Error('The ID provided is not a movie ID');
+  }
+
+  const promises = [];
+
+  let media = await findMovie(mediaId, userId);
+  if (!media) {
+    promises.push(saveMovieActors(mediaId));
+    media = await storeMovieInDB(mediaId);
+    media.watchedByUser = { date: null };
+    media.watchedByGroups = [];
+  } else if (Number(media.numberOfActors) === 0) {
+    promises.push(saveMovieActors(mediaId));
+  }
+  return { media, promises: Promise.all(promises) };
+}
+
+/**
+ * A function that handles the series, brings all the necessary information about it and adds it
+ * to the DB if it does not exist.
+ * @param mediaId {string} The ID of the media with `s` prefix (e.g. `s123`)
+ * @param userId {string} The ID of the user
+ * @returns {Promise<{media: Object, promises: Promise<Awaited<unknown>[]>}>} An object that
+ * represents the series for the user, and a Promise that waits for the end of several actions
+ * that are running at the same time
+ */
+export async function handleSeries(mediaId, userId) {
+  if (!mediaId.startsWith('s')) {
+    throw new Error('The ID provided is not a series ID');
+  }
+
+  const promises = [];
+
+  let tmdbMedia;
+  let media;
+  [media, tmdbMedia] = await Promise.all([
+    findSeries(mediaId, userId),
+    axios.get(`https://api.themoviedb.org/3/tv/${mediaId.slice(1)}?api_key=${process.env.TMDB_KEY}`),
+  ]);
+
+  tmdbMedia = tmdbMedia.data;
+
+  promises.push(updateSeriesActors(media, tmdbMedia, mediaId));
+
+  if (!media) {
+    media = await storeSeriesInDB(mediaId, tmdbMedia);
+    media.watchedByUser = { date: null };
+    media.watchedByGroups = [];
+  } else if (media.numberOfSeasons !== tmdbMedia.number_of_seasons) {
+    promises.push(updateNumberOfSeasons(mediaId, tmdbMedia.number_of_seasons));
+    media.numberOfSeasons = tmdbMedia.number_of_seasons;
+  }
+
+  media.posterUrl = tmdbMedia.poster_path;
+  media.firstAirDate = tmdbDateToJsDate(tmdbMedia.first_air_date).getFullYear();
+  media.lastAirDate = tmdbMedia.status.toLowerCase() === 'ended'
+    ? tmdbDateToJsDate(tmdbMedia.last_air_date).getFullYear()
+    : 'present';
+
+  return { media, promises: Promise.all(promises) };
 }

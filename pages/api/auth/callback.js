@@ -18,7 +18,12 @@ export default async function handler(req, res, next) {
           googleId, firstName, lastName, email, image,
         });
         await session.save();
-        res.redirect('/');
+
+        if (user.creationTime === user.lastLogin) {
+          res.redirect('/initial-recommendation');
+        } else {
+          res.redirect('/');
+        }
       } else {
         res.redirect('/login');
       }

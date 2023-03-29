@@ -117,3 +117,15 @@
     color: white;
     margin-bottom: 15px;
 }
+
+.actionButtons {
+    display: flex;
+    gap: 15px;
+    padding: 0 40px;
+}
+
+.actionButton {
+    position: relative;
+    height: 30px;
+    font-size: 0.9em !important;
+}
