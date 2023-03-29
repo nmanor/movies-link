@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes, { string } from 'prop-types';
 import Image from 'next/image';
 import styles from './PostersCollageComponent.module.css';
@@ -8,8 +8,14 @@ const height = 120;
 const gridSize = 4;
 
 export default function PostersCollageComponent({ images }) {
+  const handleError = useCallback((e) => {
+    const { 8: image } = images;
+    e.target.src = image;
+  }, [images]);
+
   const renderImage = (src) => (
     <Image
+      onError={handleError}
       src={src}
       width={width}
       height={height}
