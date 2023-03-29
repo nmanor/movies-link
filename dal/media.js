@@ -147,6 +147,17 @@ export async function updateNumberOfSeasons(seriesId, numberOfSeasons) {
   }
 }
 
+export async function getAllUserMediaIds(userId) {
+  try {
+    const query = `MATCH (:User {googleId: $userId})-[:WATCHED|MEMBER_OF*1..2]-(m:Media)
+                   RETURN COLLECT(m.id) AS ids`;
+    return (await read(query, { userId }))[0].ids;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+}
+
 async function saveMovieActors(mediaId) {
   const cast = await fetchMovieCast(mediaId);
   await addActorsToMedia(mediaId, processCast(cast, MAX_ACTORS));

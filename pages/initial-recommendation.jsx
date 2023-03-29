@@ -13,8 +13,9 @@ import SnackbarComponent from '../components/shared/SnackbarComponent/SnackbarCo
 
 const accentColor = '#92cce4';
 
-export default function InitialRecommendation({ initialMedia }) {
-  const [media, setMedia] = useState(initialMedia);
+export default function InitialRecommendation({ initialMedia, userMedia }) {
+  const [media, setMedia] = useState(initialMedia
+    .filter((obj1) => !userMedia.some((id) => obj1.id === id)));
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [page, setPage] = useState(1);
   const [popupOpen, setPopupOpen] = useState(false);
@@ -31,7 +32,9 @@ export default function InitialRecommendation({ initialMedia }) {
         setSelectedMedia((prev) => [...prev, id]);
 
         const response = await axios.post('/api/initial-recommendation/similar', { id });
-        const similar = response.data.filter((obj1) => !media.some((obj2) => obj1.id === obj2.id));
+        const similar = response.data
+          .filter((obj1) => !media.some((obj2) => obj1.id === obj2.id))
+          .filter((obj1) => !userMedia.some((mediaId) => obj1.id === mediaId));
         setMedia((prev) => {
           const newMedia = [...prev];
           const index = newMedia.findIndex((m) => m.id === id);
@@ -155,27 +158,34 @@ export default function InitialRecommendation({ initialMedia }) {
 
 InitialRecommendation.propTypes = {
   initialMedia: PropTypes.arrayOf(Object),
+  userMedia: PropTypes.arrayOf(String),
 };
 
 InitialRecommendation.defaultProps = {
   initialMedia: [],
+  userMedia: [],
 };
 
 export const getServerSideProps = getServerSidePropsLoginMiddleware(async (context) => {
   try {
     const { user } = context.req.session;
 
-    const initialResponse = await axios.post(
-      `${process.env.BASE_URL}/api/initial-recommendation/initial-list`,
-      { user: user.googleId },
-    );
+    const [initialResponse, userMediaResponse] = await Promise.all([
+      axios.post(`${process.env.BASE_URL}/api/initial-recommendation/initial-list`, { user: user.googleId }),
+      axios.post(`${process.env.BASE_URL}/api/initial-recommendation/user-media`, { user: user.googleId }),
+    ]);
 
     let initialMedia = [];
     if (initialResponse.status === HttpStatusCode.Ok) {
       initialMedia = initialResponse.data;
     }
 
-    return { props: { user, initialMedia } };
+    let userMedia = [];
+    if (userMediaResponse.status === HttpStatusCode.Ok) {
+      userMedia = userMediaResponse.data;
+    }
+
+    return { props: { user, initialMedia, userMedia } };
   } catch (e) {
     console.error(e);
     return redirectToPage('/404');
