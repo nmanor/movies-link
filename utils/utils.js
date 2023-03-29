@@ -9,6 +9,13 @@ import MediaType from './enums';
 export const random = (min = 1, max = 100) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 /**
+ * Return random element from list of elements.
+ * @param list {any[]} Array of elements
+ * @returns {*} Random element from the list
+ */
+export const randomElement = (list) => list[random(0, list.length - 1)];
+
+/**
  * Convert group name to acronyms of the first and the last words (e.g. Hello world > HW).
  * @param name {string} The name of the group
  * @returns {string} The 2-chars acronyms

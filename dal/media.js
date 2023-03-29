@@ -219,7 +219,7 @@ export async function handleMovie(mediaId, userId) {
     media = await storeMovieInDB(mediaId);
     media.watchedByUser = { date: null };
     media.watchedByGroups = [];
-  } else if (media.numberOfActors === 0) {
+  } else if (Number(media.numberOfActors) === 0) {
     promises.push(saveMovieActors(mediaId));
   }
   return { media, promises: Promise.all(promises) };

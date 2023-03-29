@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   try {
     const { query } = req.query;
     if (!query || query.length === 0) {
-      return res.status(404).end();
+      return res.status(HttpStatusCode.NotFound).end();
     }
 
     const requests = [
