@@ -72,7 +72,7 @@ export default function InitialRecommendation({ initialMedia, userMedia }) {
       console.log(e);
     }
 
-    setTimeout(() => router.push('/timeline'), timeout);
+    setTimeout(() => router.push('/'), timeout);
   }, [selectedMedia]);
 
   const handlePopupNegativeClick = useCallback(() => setPopupOpen(false), []);
