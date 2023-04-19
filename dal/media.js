@@ -11,7 +11,9 @@ export async function findMovie(movieId, userId) {
   try {
     const query = `MATCH (m:Movie {id: $movieId}), (u:User {googleId: $userId})
                    OPTIONAL MATCH (u)-[w:WATCHED]->(m)
+                   WITH u, m, {date: w.date} AS watchedByUser
                    OPTIONAL MATCH (u)-[:MEMBER_OF]->(g:Group)-[gw:WATCHED]->(m)
+                   WITH m, watchedByUser, COLLECT(DISTINCT g{.name, .id, .color, date: gw.date}) AS watchedByGroups
                    OPTIONAL MATCH (a:Actor)-[:ACTED_IN]->(m)
                    RETURN m.id AS id, 
                           m.posterUrl AS posterUrl, 
@@ -19,8 +21,8 @@ export async function findMovie(movieId, userId) {
                           m.distributionYear AS distributionYear, 
                           m.duration AS duration,
                           m.mediaType AS mediaType,
-                          {date: w.date} AS watchedByUser,
-                          COLLECT(g{.name, .id, .color, date: gw.date}) AS watchedByGroups,
+                          watchedByUser,
+                          watchedByGroups,
                           COUNT(a) AS numberOfActors`;
     const result = await read(query, { movieId, userId });
     return result[0];
