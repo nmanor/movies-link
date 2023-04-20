@@ -1,0 +1,33 @@
+.container {
+    color: gray;
+    margin-top: 20px;
+}
+
+.container h3 {
+    margin-left: var(--padding-sides-value);
+}
+
+.mediaList {
+    gap: 10px;
+    width: calc(100vw);
+    display: flex;
+    overflow-x: scroll;
+    padding: var(--padding-sides-value);
+    padding-top: 10px;
+}
+
+.mediaList::-webkit-scrollbar {
+    display: none;
+}
+
+.media {
+    text-decoration: none;
+    border: none;
+    outline: none;
+    padding: 8px 20px;
+    font-size: 1em;
+    border-radius: 50px;
+    background-color: var(--gray-600);
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+}
