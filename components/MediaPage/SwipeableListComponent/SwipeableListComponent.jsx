@@ -12,7 +12,7 @@ export const ActionType = { Add: 0, Remove: 1 };
 
 function formatDate(date) {
   const number = Number(date);
-  if (number) {
+  if (number && number > 0) {
     return new Date(number).toLocaleDateString('he-IL');
   }
   return 'Unknown date';
