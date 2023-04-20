@@ -1,29 +1,17 @@
 .container {
-    --sidebar-width: 90px;
+    --sidebar-width: 50px;
     --card-background-color: rgba(255, 255, 255, 0.2);
     color: white;
-    background-attachment: fixed;
-    background-image: url('/images/dark-background.jpg');
-    background-size: cover;
     padding-bottom: var(--padding-bottom);
+    min-height: 100vh;
+    position: absolute;
 }
 
 .container > p {
     text-align: justify;
 }
 
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: var(--sidebar-width);
-    backdrop-filter: blur(12px);
-    background-color: var(--card-background-color);
-}
-
 .title {
     padding: var(--padding-sides-value);
-    padding-left: calc(var(--padding-sides-value) + var(--sidebar-width));
 }
 
