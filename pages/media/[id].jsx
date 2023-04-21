@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  Fragment, useCallback, useEffect, useState,
+} from 'react';
 import { PropTypes } from 'prop-types';
 import axios, { HttpStatusCode } from 'axios';
 import { ParallaxBanner, ParallaxProvider } from 'react-scroll-parallax';
@@ -15,8 +17,9 @@ import redirectToPage from '../../utils/redirectToPage';
 import SnackbarComponent from '../../components/shared/SnackbarComponent/SnackbarComponent';
 import ExpanderComponent from '../../components/shared/ExpanderComponent/ExpanderComponent';
 import SwipeableListComponent, { ActionType } from '../../components/MediaPage/SwipeableListComponent/SwipeableListComponent';
-import MediaType from '../../utils/enums';
+import EntityType from '../../utils/enums';
 import SeriesMetadataComponent from '../../components/MediaPage/SeriesMetadataComponent/SeriesMetadataComponent';
+import SimilarMediaComponent from '../../components/MediaPage/SimilarMediaComponent/SimilarMediaComponent';
 
 const SECOND = 1000;
 
@@ -45,6 +48,7 @@ export default function Media({
   const [loading, setLoading] = useState(false);
   const [expanderOpen, setExpanderOpen] = useState(false);
   const [allActors, setAllActors] = useState([]);
+  const [similarMedia, setSimilarMedia] = useState([]);
 
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -66,6 +70,16 @@ export default function Media({
     setAccentColor(color);
   };
   useEffect(() => { updateAccentColor(); }, [posterUrl]);
+
+  const fetchSimilarMedia = async () => {
+    try {
+      const response = await axios.post('/api/initial-recommendation/similar', { id });
+      setSimilarMedia(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => { fetchSimilarMedia(); }, [id]);
 
   const changePopupState = useCallback(
     () => {
@@ -157,7 +171,8 @@ export default function Media({
     } catch (e) {
       openSnackbar('Error fetching the actors');
     }
-  }, []);
+  }, [id]);
+  useEffect(() => setAllActors([]), [id]);
 
   const renderButton = () => (
     <ButtonComponent
@@ -238,8 +253,14 @@ export default function Media({
     return renderButton();
   };
 
+  useEffect(() => {
+    setWatchedByUser(initialWatchedByUser);
+    setWatchedByGroups(initialWatchedByGroups);
+    setExpanderOpen(false);
+  }, [id]);
+
   return (
-    <>
+    <Fragment key={id}>
       <title>{name}</title>
       <meta name="theme-color" content={accentColor} />
       <SnackbarComponent
@@ -273,7 +294,7 @@ export default function Media({
           <div className={styles.containerCorner} />
           <div className={styles.header}>
             <h1>{name}</h1>
-            {mediaType === MediaType.Movie
+            {mediaType === EntityType.Movie
               ? (
                 <MovieMetadataComponent
                   mediaType={mediaType}
@@ -291,7 +312,7 @@ export default function Media({
                   accentColor={accentColor}
                 />
               )}
-            {renderAddToWatchlistController(watchedByUser, watchedByGroups)}
+            {renderAddToWatchlistController()}
           </div>
 
           <div className={styles.playersSection}>
@@ -339,9 +360,10 @@ export default function Media({
                 </div>
               )}
           </div>
+          <SimilarMediaComponent media={similarMedia} accentColor={accentColor} />
         </article>
       </ParallaxProvider>
-    </>
+    </Fragment>
   );
 }
 

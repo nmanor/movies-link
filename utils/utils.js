@@ -1,4 +1,4 @@
-import MediaType from './enums';
+import EntityType from './enums';
 
 /**
  * Returns a random number in the specified range.
@@ -43,4 +43,4 @@ export const salt = () => (Math.random() + 1).toString(36).substring(2);
  * @param mediaId {string} the ID of the media
  * @returns {string} One of the options in `MediaType`
  */
-export const getMediaType = (mediaId) => (mediaId.startsWith('m') ? MediaType.Movie : MediaType.Series);
+export const getMediaType = (mediaId) => (mediaId.startsWith('m') ? EntityType.Movie : EntityType.Series);

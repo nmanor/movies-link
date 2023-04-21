@@ -2,7 +2,7 @@ import { HttpStatusCode } from 'axios';
 import { withIronSessionApiRoute } from 'iron-session/next';
 import cookiesSettings from '../../../utils/cookies';
 import getKnownActors from '../../../dal/actors';
-import MediaType from '../../../utils/enums';
+import EntityType from '../../../utils/enums';
 import { getMediaType } from '../../../utils/utils';
 import { handleMovie, handleSeries } from '../../../dal/media';
 
@@ -22,7 +22,7 @@ async function handler(req, res) {
 
     let media;
     let promises;
-    if (mediaType === MediaType.Movie) {
+    if (mediaType === EntityType.Movie) {
       const result = await handleMovie(mediaId, userId);
       media = result.media;
       promises = result.promises;
@@ -52,7 +52,7 @@ async function handler(req, res) {
       knownActors: actors,
     };
 
-    if (mediaType === MediaType.Movie) {
+    if (mediaType === EntityType.Movie) {
       result.duration = { hours: media.duration[0], minutes: media.duration[1] };
     }
 

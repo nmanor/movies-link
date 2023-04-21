@@ -1,0 +1,24 @@
+.container {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 15px;
+    margin-bottom: -2px;
+    z-index: 3;
+    position: relative;
+}
+
+.tab {
+    color: gray;
+    background-color: transparent;
+    outline: none;
+    border: none;
+    font-size: 1em;
+    padding: 5px 10px 10px;
+    transition: 200ms ease-in-out;
+    border-bottom: transparent 2px solid;
+}
+
+.selectedTab {
+    color: white;
+    border-bottom: white 2px solid;
+}

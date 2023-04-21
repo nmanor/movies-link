@@ -1,16 +1,15 @@
 .container {
-    --negative-margin: calc(-1 * var(--padding-sides-value));
     position: sticky;
     top: 0;
     z-index: 5;
     gap: 5px;
-    margin: 0 var(--negative-margin) 0 var(--negative-margin);
     width: calc(100vw);
     display: flex;
     overflow-x: scroll;
     padding: var(--padding-sides-value);
+    padding-top: 20px;
     align-items: center;
-    background: linear-gradient(0deg, rgba(0,0,0,0) 0%, var(--gray-700) 45%);
+    background: linear-gradient(0deg, rgba(0,0,0,0) 0%, var(--background-color) 45%);
 }
 
 .container::-webkit-scrollbar {
@@ -22,7 +21,7 @@
     border: none;
     outline: none;
     padding: 8px 20px;
-    font-size: 1.2em;
+    font-size: 1em;
     border-radius: 50px;
     background-color: var(--gray-600);
     color: white;

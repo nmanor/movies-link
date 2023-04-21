@@ -13,8 +13,10 @@
     gap: 5px;
     color: white;
     text-decoration: none;
+    text-align: center;
     background: transparent;
     border: none;
+    font-size: 1em;
 }
 
 .createButton {

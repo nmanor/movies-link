@@ -2,7 +2,7 @@ import { withIronSessionApiRoute } from 'iron-session/next';
 import { HttpStatusCode } from 'axios';
 import cookiesSettings from '../../../utils/cookies';
 import { getMediaType } from '../../../utils/utils';
-import MediaType from '../../../utils/enums';
+import EntityType from '../../../utils/enums';
 import { fetchMovieCast, fetchSeriesCast, processCast } from '../../../utils/actors';
 
 async function handler(req, res) {
@@ -22,12 +22,12 @@ async function handler(req, res) {
     }
 
     const mediaType = getMediaType(mediaId);
-    if (mediaType === MediaType.Series && !numberOfSeasons) {
+    if (mediaType === EntityType.Series && !numberOfSeasons) {
       return res.status(HttpStatusCode.UnprocessableEntity).send({ message: 'Missing number of seasons' });
     }
 
     let cast;
-    if (mediaType === MediaType.Movie) cast = await fetchMovieCast(mediaId);
+    if (mediaType === EntityType.Movie) cast = await fetchMovieCast(mediaId);
     else cast = await fetchSeriesCast(1, numberOfSeasons, mediaId);
 
     const actors = processCast(cast).map((actor) => ({
