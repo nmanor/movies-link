@@ -180,7 +180,7 @@ export default function Media({
       accentColor={accentColor}
       onClick={watchedByUser.date ? removeMedia : changePopupState}
     >
-      {`${watchedByUser.date ? 'Remove from' : 'Add to'} my watched list`}
+      {`${watchedByUser.date ? 'Unmark' : 'Mark'} as Watched`}
     </ButtonComponent>
   );
 
@@ -196,12 +196,12 @@ export default function Media({
 
     let title;
     if (expanderOpen) {
-      if (existingGroups.length === 0) title = 'Close Add menu';
-      else if (optionalGroups.length === 0) title = 'Close removal menu';
-      else title = 'Close watch history';
-    } else if (existingGroups.length === 0) title = 'Add to my watched list';
-    else if (optionalGroups.length === 0) title = 'Remove from my watched list';
-    else title = 'View watch history';
+      if (existingGroups.length === 0) title = 'Close Add Menu';
+      else if (optionalGroups.length === 0) title = 'Close Removal Menu';
+      else title = 'Close Watch History';
+    } else if (existingGroups.length === 0) title = 'Mark as Watched';
+    else if (optionalGroups.length === 0) title = 'Unmark as Watched';
+    else title = 'View Watch History';
 
     return (
       <ExpanderComponent
