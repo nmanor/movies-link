@@ -4,15 +4,16 @@ import Image from 'next/image';
 import classNames from 'classnames/bind';
 import ClickableListItemComponent from '../../shared/ClickableListItemComponent/ClickableListItemComponent';
 import styles from './ResultComponent.module.css';
+import EntityType from '../../../utils/enums';
 
 const cx = classNames.bind(styles);
 
 function ResultComponent({
   data: {
     id,
-    title,
+    name,
     releaseYear,
-    mediaType,
+    entityType,
     imageUrl,
   },
   delay,
@@ -34,11 +35,11 @@ function ResultComponent({
       className={cx(styles.listItem, { [styles.slideFromLeft]: isSliding })}
     >
       <ClickableListItemComponent
-        href={`/media/${id}`}
+        href={`/${entityType === EntityType.Actor ? 'actor' : 'media'}/${id}`}
       >
         <Image
           className={styles.image}
-          alt={`Image of ${title}`}
+          alt={`Image of ${name}`}
           src={src}
           width={70}
           height={70}
@@ -46,13 +47,10 @@ function ResultComponent({
           priority={priority}
         />
         <div>
-          <p>{title}</p>
+          <p>{name}</p>
           <p className={styles.secondaryText}>
-            {mediaType}
-            {' '}
-            |
-            {' '}
-            {releaseYear}
+            {entityType}
+            {entityType !== EntityType.Actor && ` | ${releaseYear}`}
           </p>
         </div>
       </ClickableListItemComponent>

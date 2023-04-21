@@ -21,7 +21,7 @@ export default function Search() {
 
   const performSearch = async (term) => {
     if (term && term.length > 0) {
-      const { status, data } = await axios.get(`/api/search?query=${encodeURIComponent(term)}`);
+      const { status, data } = await axios.get(`/api/search?query=${encodeURIComponent(term.trim())}`);
       if (status === HttpStatusCode.Ok) {
         setResults(data);
         setNoResults(!data || data.length === 0);

@@ -1,7 +1,7 @@
 import { withIronSessionApiRoute } from 'iron-session/next';
 import axios, { HttpStatusCode } from 'axios';
 import cookiesSettings from '../../../utils/cookies';
-import MediaType from '../../../utils/enums';
+import EntityType from '../../../utils/enums';
 
 async function handler(req, res) {
   try {
@@ -25,7 +25,7 @@ async function handler(req, res) {
       id: `m${id}`,
       title,
       releaseYear: releaseDate.split('-')[0],
-      mediaType: MediaType.Movie,
+      mediaType: EntityType.Movie,
       popularity,
     }));
     const series = seriesResponse.data.results.map(({
@@ -34,7 +34,7 @@ async function handler(req, res) {
       id: `s${id}`,
       title,
       releaseYear: firstAirDate.split('-')[0],
-      mediaType: MediaType.Series,
+      mediaType: EntityType.Series,
       popularity,
     }));
 

@@ -17,7 +17,7 @@ import redirectToPage from '../../utils/redirectToPage';
 import SnackbarComponent from '../../components/shared/SnackbarComponent/SnackbarComponent';
 import ExpanderComponent from '../../components/shared/ExpanderComponent/ExpanderComponent';
 import SwipeableListComponent, { ActionType } from '../../components/MediaPage/SwipeableListComponent/SwipeableListComponent';
-import MediaType from '../../utils/enums';
+import EntityType from '../../utils/enums';
 import SeriesMetadataComponent from '../../components/MediaPage/SeriesMetadataComponent/SeriesMetadataComponent';
 import SimilarMediaComponent from '../../components/MediaPage/SimilarMediaComponent/SimilarMediaComponent';
 
@@ -294,7 +294,7 @@ export default function Media({
           <div className={styles.containerCorner} />
           <div className={styles.header}>
             <h1>{name}</h1>
-            {mediaType === MediaType.Movie
+            {mediaType === EntityType.Movie
               ? (
                 <MovieMetadataComponent
                   mediaType={mediaType}
