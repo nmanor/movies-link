@@ -25,7 +25,7 @@ export default function Login({ images }) {
         </p>
         <Link href="/api/auth/google" ref={bottomRef}>
           <Image
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/800px-Google_%22G%22_Logo.svg.png"
+            src="/images/google-logo.png"
             width={25}
             height={25}
             alt="Google logo"
