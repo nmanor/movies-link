@@ -1,5 +1,6 @@
 {
-  "extends": ["airbnb-base", "airbnb"],
+//  "extends": ["airbnb-base", "airbnb"],
+  "extends": [],
   "env": {
     "node": true,
     "es6": true,

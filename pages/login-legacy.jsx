@@ -3,11 +3,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import axios from 'axios';
 import PropTypes, { string } from 'prop-types';
-import PostersCollageComponent from '../components/LoginPage/PostersCollageComponent/PostersCollageComponent';
+import PostersCollage from '@/components/LoginPage/PostersCollage/PostersCollage';
 import redirectToPage from '../utils/redirectToPage';
 import styles from '../styles/Login.module.css';
 
-export default function Login({ images }) {
+export default function LoginLegacy({ images }) {
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function Login({ images }) {
 
   return (
     <div className={styles.container}>
-      <PostersCollageComponent images={images} />
+      <PostersCollage images={images} />
       <div className={styles.title}>
         <h1>Welcome to Movie Links!</h1>
         <p>
@@ -37,11 +37,11 @@ export default function Login({ images }) {
   );
 }
 
-Login.propTypes = {
+LoginLegacy.propTypes = {
   images: PropTypes.arrayOf(string),
 };
 
-Login.defaultProps = {
+LoginLegacy.defaultProps = {
   images: [],
 };
 
