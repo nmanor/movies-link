@@ -20,47 +20,49 @@ export default async function Home() {
         console.error(err);
     }
 
-    return (<main className={styles.main}>
-        <Image
-            className={styles.tvImage}
-            width={150}
-            height={150}
-            src="/images/tv.png"
-            alt="Illustration of TV and popcorn"
-        />
-        {/*<h1 className={styles.greeting}>{greetByTime(user.firstName)}</h1>*/}
-        <h1 className={styles.greeting}>{greetByTime('Yodljgdg')}</h1>
-        <Link className={styles.searchShortcut} href="/search">
-            <BlankSearchSVGComponent/>
-            <p>
-                Looking for a movie or TV show?
-                <br/>
-                <span>
+    return (
+        <main className={styles.main}>
+            <Image
+                className={styles.tvImage}
+                width={150}
+                height={150}
+                src="/images/tv.png"
+                alt="Illustration of TV and popcorn"
+            />
+            {/*<h1 className={styles.greeting}>{greetByTime(user.firstName)}</h1>*/}
+            <h1 className={styles.greeting}>{greetByTime('Yodljgdg')}</h1>
+            <Link className={styles.searchShortcut} href="/search">
+                <BlankSearchSVGComponent/>
+                <p>
+                    Looking for a movie or TV show?
+                    <br/>
+                    <span>
               Try the search here
             </span>
-            </p>
-        </Link>
+                </p>
+            </Link>
 
-        <h2 className={styles.trendingTitle}>Trending movies & TV shows</h2>
-        <div className={styles.trending}>
-            {trending.map(({id, path, title}, i) => (
-                <Link key={id} href={`/media/${id}`} className={styles.mediaCard}>
-                    <figure className={styles.imageWrapper}>
-                        <Image
-                            src={path}
-                            alt={`Poster of ${title}`}
-                            fill
-                            priority={i < 3}
-                        />
-                    </figure>
-                    <div className={styles.mediaTitle}>
-                        {id.startsWith('m')
-                            ? <CameraSVGComponent/>
-                            : <TvSVGComponent/>}
-                        <h3>{title}</h3>
-                    </div>
-                </Link>
-            ))}
-        </div>
-    </main>);
+            <h2 className={styles.trendingTitle}>Trending movies & TV shows</h2>
+            <div className={styles.trending}>
+                {trending.map(({id, path, title}, i) => (
+                    <Link key={id} href={`/media/${id}`} className={styles.mediaCard}>
+                        <figure className={styles.imageWrapper}>
+                            <Image
+                                src={path}
+                                alt={`Poster of ${title}`}
+                                fill
+                                priority={i < 3}
+                            />
+                        </figure>
+                        <div className={styles.mediaTitle}>
+                            {id.startsWith('m')
+                                ? <CameraSVGComponent/>
+                                : <TvSVGComponent/>}
+                            <h3>{title}</h3>
+                        </div>
+                    </Link>
+                ))}
+            </div>
+        </main>
+    );
 }

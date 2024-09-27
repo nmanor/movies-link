@@ -28,23 +28,3 @@
     height: 22px;
     width: 22px;
 }
-
-.circle {
-    --size: 50px;
-    border-radius: 50%;
-    left: 0;
-    right: 0;
-    bottom: calc(-1 * var(--size) / 2 - 20px);
-    width: var(--size);
-    height: var(--size);
-    background-color: white;
-    margin: 0 auto;
-    position: absolute;
-    filter: blur(20px);
-    opacity: 0.4;
-    clip-path: polygon(0 -250%, 250% -150%, 250% 50%, -250% 50%);
-}
-
-.invisible {
-    opacity: 0;
-}
