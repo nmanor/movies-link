@@ -1,6 +1,5 @@
 'use client'
 
-import React, {SyntheticEvent, useCallback} from 'react';
 import Image from 'next/image';
 import styles from './PostersCollage.module.css';
 
@@ -12,24 +11,17 @@ type PostersCollageProps = {
     images: string[];
 }
 
+const renderImage = (src: string) => (
+    <Image
+        src={src}
+        width={width}
+        height={height}
+        key={src.slice(48)}
+        alt=""
+    />
+);
+
 export default function PostersCollage({images}: PostersCollageProps) {
-    const handleError = useCallback((e: SyntheticEvent<HTMLImageElement>) => {
-        const {8: image} = images;
-        const target = e.target as HTMLImageElement;
-        target.src = image;
-    }, [images]);
-
-    const renderImage = (src: string) => (
-        <Image
-            onError={handleError}
-            src={src}
-            width={width}
-            height={height}
-            key={src.slice(48)}
-            alt=""
-        />
-    );
-
     return (
         <div className={styles.table}>
             {Array.from({length: gridSize}, (_, i) => (
