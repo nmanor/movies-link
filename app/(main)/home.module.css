@@ -1,0 +1,114 @@
+.main {
+    padding: var(--padding-sides-value);
+    color: white;
+    display: grid;
+    grid-template: repeat(4, auto) 1fr / 1fr;
+    padding-bottom: calc(20px + var(--padding-bottom));
+    height: 100vh;
+    position: relative;
+    background-attachment: fixed;
+    background-image: url('/images/dark-background.jpg');
+    background-size: cover;
+}
+
+.tvImage {
+    margin: 10px auto;
+}
+
+.greeting {
+    text-align: center;
+}
+
+.searchShortcut {
+    display: flex;
+    color: white;
+    fill: white;
+    text-decoration: none;
+    gap: 15px;
+    align-items: center;
+    margin: 30px 0;
+    opacity: 0.5;
+}
+
+.searchShortcut svg {
+    width: 30px;
+    height: 30px;
+}
+
+.searchShortcut span {
+    text-decoration: underline !important;
+}
+
+.trendingTitle {
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.trending {
+    display: flex;
+    gap: 25px;
+    width: calc(100% + 2 * var(--padding-sides-value));
+    margin: 0 calc(-1 * var(--padding-sides-value));
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+}
+
+.trending::-webkit-scrollbar {
+    display: none;
+}
+
+.mediaCard {
+    --card-width: 60vw;
+    scroll-snap-align: center;
+    height: 100%;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    color: white;
+    text-decoration: none;
+    width: var(--card-width);
+}
+
+.mediaCard:first-child {
+    margin-left: var(--padding-sides-value);
+}
+
+.mediaCard:last-child {
+    margin-right: var(--padding-sides-value);
+}
+
+.imageWrapper {
+    width: var(--card-width);
+    height: 100%;
+    flex-grow: 1;
+    position: relative;
+}
+
+.mediaCard img {
+
+    object-fit: cover;
+    border-radius: 25px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px, rgba(0, 0, 0, 0.23) 0 3px 6px;
+    border: rgba(255, 255, 255, 0.07) 2px solid;
+}
+
+.mediaTitle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 10px;
+}
+
+.mediaTitle svg {
+    width: 25px;
+    height: 25px;
+    fill: white;
+}
+
+.mediaTitle h3 {
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: normal;
+}
