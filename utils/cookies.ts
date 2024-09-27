@@ -1,6 +1,6 @@
-import {IronSessionOptions} from "iron-session";
+import {SessionOptions} from "iron-session";
 
-const cookiesSettings: IronSessionOptions = {
+const cookiesSettings: SessionOptions = {
   cookieName: process.env.COOKIE_NAME ?? '',
   password: process.env.COOKIE_PASSWORD ?? '',
   cookieOptions: {

@@ -149,7 +149,7 @@ export default function Group({
             {' '}
             when you join this group,
             {' '}
-            {movies.length === 1 ? 'the media' : `${movies.length} media`}
+            {movies.length === 1 ? 'the media-legacy' : `${movies.length} media`}
             {' '}
             watched in it will automatically be added to your watch list.
           </p>

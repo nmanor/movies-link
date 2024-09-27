@@ -213,9 +213,9 @@ async function storeSeriesInDB(mediaId, data) {
 /**
  * A function that handles the movie, brings all the necessary information about it and adds it
  * to the DB if it does not exist.
- * @param mediaId {string} The ID of the media with `m` prefix (e.g. `m123`)
+ * @param mediaId {string} The ID of the media-legacy with `m` prefix (e.g. `m123`)
  * @param userId {string} The ID of the user
- * @returns {Promise<{media: Object, promises: Promise<Awaited<unknown>[]>}>} An object that
+ * @returns {Promise<{media-legacy: Object, promises: Promise<Awaited<unknown>[]>}>} An object that
  * represents the movie for the user, and a Promise that waits for the end of several actions
  * that are running at the same time
  */
@@ -241,9 +241,9 @@ export async function handleMovie(mediaId, userId) {
 /**
  * A function that handles the series, brings all the necessary information about it and adds it
  * to the DB if it does not exist.
- * @param mediaId {string} The ID of the media with `s` prefix (e.g. `s123`)
+ * @param mediaId {string} The ID of the media-legacy with `s` prefix (e.g. `s123`)
  * @param userId {string} The ID of the user
- * @returns {Promise<{media: Object, promises: Promise<Awaited<unknown>[]>}>} An object that
+ * @returns {Promise<{media-legacy: Object, promises: Promise<Awaited<unknown>[]>}>} An object that
  * represents the series for the user, and a Promise that waits for the end of several actions
  * that are running at the same time
  */

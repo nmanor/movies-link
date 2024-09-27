@@ -54,7 +54,7 @@ export default function InitialRecommendation({ initialMedia, userMedia }) {
     if (selectedMedia.length > 0) {
       setPopupTitle(`Save ${selectedMedia.length} media to your watch list?`);
     } else {
-      setPopupTitle('Are you sure you don\'t want to save any media?');
+      setPopupTitle('Are you sure you don\'t want to save any media-legacy?');
     }
     setPopupOpen(true);
   }, [selectedMedia]);

@@ -95,7 +95,7 @@ export default function Media({
 
     const epoch = date ? date.getTime() : -1;
     const group = groups.find((g) => g.id === chosenGroup);
-    const url = group ? '/api/groups/add-media' : '/api/media/add-to-watched-list';
+    const url = group ? '/api/groups/add-media-legacy' : '/api/media-legacy/add-to-watched-list';
     const data = { movieId: id, watchDate: epoch };
     if (group) data.groupId = group.id;
 
@@ -110,7 +110,7 @@ export default function Media({
 
       setLoading(false);
 
-      const msg = success ? 'The media was successfully added' : 'Error adding the media';
+      const msg = success ? 'The media-legacy was successfully added' : 'Error adding the media-legacy';
       openSnackbar(msg);
     }, 1000);
   }, []);
@@ -119,7 +119,7 @@ export default function Media({
     setLoading(true);
 
     const group = watchedByGroups.find((g) => g.id === chosenGroup);
-    const url = group ? '/api/groups/remove-media' : '/api/media/remove-from-watched-list';
+    const url = group ? '/api/groups/remove-media-legacy' : '/api/media-legacy/remove-from-watched-list';
     const data = { movieId: id };
     let { date } = watchedByUser;
 
@@ -141,7 +141,7 @@ export default function Media({
 
       setLoading(false);
 
-      const msg = success ? 'The media was successfully removed' : 'Error removing the media';
+      const msg = success ? 'The media-legacy was successfully removed' : 'Error removing the media-legacy';
       const undoRemove = () => {
         chosenGroup = chosenGroupCopy;
         addMedia(new Date(date));
@@ -239,7 +239,7 @@ export default function Media({
   };
 
   const renderAddToWatchlistController = () => {
-    // if the user watched the media with group, return expander
+    // if the user watched the media-legacy with group, return expander
     if (watchedByGroups && watchedByGroups.length !== 0) {
       return renderExpander();
     }

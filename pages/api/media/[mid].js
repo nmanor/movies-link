@@ -15,7 +15,7 @@ async function handler(req, res) {
 
     const { mid: mediaId } = req.query;
     if (!mediaId) {
-      return res.status(HttpStatusCode.UnprocessableEntity).send({ message: 'Missing media ID' });
+      return res.status(HttpStatusCode.UnprocessableEntity).send({ message: 'Missing media-legacy ID' });
     }
 
     const mediaType = getMediaType(mediaId);
