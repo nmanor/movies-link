@@ -6,6 +6,10 @@
     margin-top: -7vh;
     justify-content: center;
     z-index: 1;
+    position: absolute;
+    bottom: 7vh;
+    left: 0;
+    right: 0;
 }
 
 .column {

@@ -19,7 +19,9 @@ export default async function Login() {
 
     return (
         <main className={styles.container}>
-            <PostersCollage images={images}/>
+            <div className={styles.postersCollageWrapper}>
+                <PostersCollage images={images}/>
+            </div>
             <div className={styles.title}>
                 <h1>Welcome to Movie Links!</h1>
                 <p>
