@@ -8,8 +8,14 @@ import React from "react";
 import styles from './home.module.css';
 import axios, {HttpStatusCode} from "axios";
 import Trending from "@/definitions/trending";
+import {getIronSession} from "iron-session";
+import {SessionData} from "@/definitions/session";
+import {cookies} from "next/headers";
+import cookiesSettings from "@/utils/cookies";
 
 export default async function Home() {
+    const {user} = await getIronSession<SessionData>(cookies(), cookiesSettings);
+
     let trending: Trending[] = [];
     try {
         const trendingResponse = await axios.get(`${process.env.BASE_URL}/api/media/trending-movies`);
@@ -29,8 +35,7 @@ export default async function Home() {
                 src="/images/tv.png"
                 alt="Illustration of TV and popcorn"
             />
-            {/*<h1 className={styles.greeting}>{greetByTime(user.firstName)}</h1>*/}
-            <h1 className={styles.greeting}>{greetByTime('Yodljgdg')}</h1>
+            <h1 className={styles.greeting}>{greetByTime(user.firstName)}</h1>
             <Link className={styles.searchShortcut} href="/search">
                 <BlankSearchSVGComponent/>
                 <p>

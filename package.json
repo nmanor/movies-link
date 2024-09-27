@@ -15,7 +15,7 @@
     "clsx": "^2.1.1",
     "eslint": "8.34.0",
     "eslint-config-next": "13.1.6",
-    "iron-session": "^6.3.1",
+    "iron-session": "^8.0.3",
     "lottie-react": "^2.4.0",
     "ml-kmeans": "^5.0.0",
     "neo4j-driver": "^5.5.0",
